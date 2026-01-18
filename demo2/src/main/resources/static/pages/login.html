@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Healthy Meal | Login</title>
+  <link rel="stylesheet" href="../assets/styles.css"/>
+</head>
+<body class="page" data-page="login">
+  <div class="app">
+    <main class="main">
+      <div class="panel">
+        <div class="header">
+          <div class="brand">
+            <div class="logo" aria-hidden="true">
+              <img class="logo-img" src="../assets/logo-leaf.svg" alt="Healthy Meal logo"/>
+            </div>
+            <div class="brand-text">
+              <h1>Healthy Meal</h1>
+              <p data-i18n="brand_tagline">영양을 중심으로, 꾸준히</p>
+            </div>
+          </div>
+
+          <div class="top-actions">
+            <div class="lang" aria-label="Language">
+              <span>Lang</span>
+              <button type="button" data-set-lang="ko">KO</button>
+              <button type="button" data-set-lang="ru">RU</button>
+              <button type="button" data-set-lang="en">EN</button>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;"></div>
+          </div>
+        </div>
+
+        <div class="note" style="margin-top:10px">
+          <div class="login">
+            <h2 class="title" data-i18n="login_title">로그인</h2>
+          </div>
+          <p class="subtitle" data-i18n="login_sub">
+            건강은 ‘덜 먹기’가 아니라 ‘제대로 먹기’에서 시작해요.
+          </p>
+
+          <div class="section">
+            <div class="card pad">
+              <div class="field">
+                <div class="label" data-i18n="email">이메일</div>
+                <input class="input" id="loginEmail"
+                       type="email"
+                       data-i18n-ph="email"
+                       placeholder="이메일"
+                       autocomplete="off"/>
+              </div>
+              <div class="field">
+                <div class="label" data-i18n="password">비밀번호</div>
+                <input class="input" id="loginPassword"
+                       type="password"
+                       data-i18n-ph="password"
+                       placeholder="비밀번호"
+                       autocomplete="new-password"/>
+              </div>
+
+              <button
+                class="btn"
+                id="loginBtn"
+                type="button"
+                style="margin-top:14px"
+                data-i18n="login_btn">
+                로그인
+              </button>
+
+              <div class="helper">
+                <span>
+                  <span data-i18n="no_account">계정이 없나요?</span>
+                  <a href="./signup.html" data-i18n="signup">회원가입</a>
+                </span>
+              </div>
+
+              <div class="notice" data-i18n="demo_note">
+                ※ 지금은 화면 완성용(데모) 로그인입니다. 백엔드 연결 시 실제 인증으로 바뀝니다.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="card pad soft">
+            <div class="note" data-i18n="brand_story"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="../assets/app.js"></script>
+  <script>
+    const API_BASE = "http://localhost:8083";
+
+    // 로그인 페이지 들어올 때마다 이전 로그인 정보 깔끔하게 지우기
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("hasProfile");
+
+    const emailInput    = document.getElementById("loginEmail");
+    const passwordInput = document.getElementById("loginPassword");
+    const loginBtn      = document.getElementById("loginBtn");
+
+    emailInput.value    = "";
+    passwordInput.value = "";
+
+    loginBtn.addEventListener("click", async () => {
+      const email    = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        alert("이메일과 비밀번호를 입력해 주세요.");
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/api/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+        console.log("login result:", data);
+
+        if (!data.success) {
+          alert(data.message || "로그인이 올바르지 않습니다.");
+          return;
+        }
+
+        // ✅ 로그인 성공 → 사용자 정보 저장
+        localStorage.setItem("userId",   String(data.userId));
+        localStorage.setItem("userName", data.name || "");
+        localStorage.setItem("userEmail", email);
+
+        // ✅ 프로필 여부 저장
+        if (data.hasProfile === true) {
+          localStorage.setItem("hasProfile", "true");
+          window.location.href = "./home.html";
+        } else {
+          localStorage.setItem("hasProfile", "false");
+          window.location.href = "./profile-setup.html";
+        }
+
+      } catch (err) {
+        console.error("login error:", err);
+        alert("서버와 통신 중 오류가 발생했습니다.");
+      }
+    });
+  </script>
+
+	</body>
+	</html>

@@ -1,0 +1,1248 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Healthy Meal | Tracker</title>
+  <link rel="stylesheet" href="../assets/styles.css"/>
+
+  <style>
+    .hidden{display:none!important;}
+
+
+	.day-summary-card{
+	  border-radius:18px;
+	  border:1px solid rgba(148,163,184,.18);
+	  background:linear-gradient(135deg,
+	    rgba(248,250,252,.98),
+	    rgba(243,232,255,.85)
+	  );
+	  box-shadow:0 10px 24px rgba(15,23,42,.04);
+	  font-size:12px;
+	  color:#0f172a;
+	}
+	.day-summary-header{
+	  display:flex;
+	  justify-content:space-between;
+	  align-items:center;
+	  margin-bottom:6px;
+	  font-size:11px;
+	  color:var(--muted);
+	}
+	.day-summary-title{
+	  letter-spacing:.08em;
+	  text-transform:uppercase;
+	  font-weight:600;
+	}
+	.day-summary-date{
+	  font-weight:600;
+	  color:rgba(15,23,42,.8);
+	}
+	.day-summary-list{
+	  margin:2px 0 0;
+	  padding:0;
+	}
+
+	/* 🔹 한 줄(row) 정렬 + 간격 */
+	.day-summary-item{
+	  display:flex;
+	  align-items:center;      /* 세로 가운데 정렬 */
+	  margin-top:4px;
+	  column-gap:14px;         /* 라벨과 값 사이 간격 */
+	}
+
+	/* 🔹 라벨 폭을 조금 넓게 (러시아어 길이 고려) */
+	.day-summary-term{
+	  min-width:80px;          /* Сон / Настроение / Вода 다 들어가도록 */
+	  font-weight:600;
+	  color:rgba(100,116,139,.95);
+	}
+
+	/* 🔹 값 부분은 자연스럽게, 붙지 않게 */
+	.day-summary-desc{
+	  flex:0 0 auto;           /* 필요 이상으로 늘어나지 않게 */
+	  white-space:nowrap;      /* "4 ч" 같이 한 줄 유지 */
+	}
+
+    /* 물 트래커 */
+    .water-row {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-top:10px;
+      flex-wrap:wrap;
+      justify-content:space-between;
+    }
+    .water-dots {
+      flex:1;
+      display:flex;
+      flex-wrap:wrap;
+      gap:4px;
+      align-items:center;
+      justify-content:center;
+      max-width:220px;
+    }
+    .water-dot {
+      width:10px;
+      height:10px;
+      border-radius:999px;
+      border:1px solid rgba(22, 163, 74, .22);
+      background: rgba(255,255,255,.95);
+      box-shadow:0 0 0 1px rgba(255,255,255,.7);
+    }
+    .water-dot.filled {
+      background: rgba(34,197,94,.96);
+      border-color: rgba(22,163,74,1);
+    }
+    .water-btn {
+      width:28px;
+      height:28px;
+      border-radius:999px;
+      border:1px solid rgba(22,163,74,.35);
+      background: rgba(236,253,245,.9);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:18px;
+      cursor:pointer;
+    }
+    .water-btn:disabled {
+      opacity:.35;
+      cursor:default;
+    }
+    .water-label {
+      font-size:11px;
+      color:var(--muted);
+      margin-top:6px;
+    }
+
+    /* 수면 – 세 가지 색 */
+    #sleepNote{
+      transition:background .2s, border-color .2s, color .2s;
+    }
+    .sleep-good{
+      background:#dcfce7;
+      border-color:#86efac;
+      color:#166534;
+    }
+    .sleep-bad{
+      background:#fee2e2;
+      border-color:#fecaca;
+      color:#b91c1c;
+    }
+    .sleep-mid{
+      background:#dbeafe;
+      border-color:#bfdbfe;
+      color:#1d4ed8;
+    }
+
+    /* 기분 카드 – 선택 시 앱 전체 느낌의 밝은 배경 */
+    .mood-card{
+      transition: background .15s ease, box-shadow .15s ease, transform .12s ease, border-color .15s ease;
+      border-radius:16px;
+    }
+	.mood-card.selected{
+	  background: linear-gradient(135deg,
+	      rgba(248,250,252,.95),
+	      rgba(236,252,245,.9)
+	  );
+	  border-color: rgba(22,163,74,.25);
+	  box-shadow:0 6px 18px rgba(15,23,42,.08);
+	  transform: translateY(-1px);
+	}
+
+
+    /* 그래프 + hover */
+    .chart-box{
+      position:relative;
+      border:1px solid rgba(31,34,48,.08);
+      border-radius:18px;
+      padding:12px;
+      background: rgba(255,255,255,.78);
+      margin-top:12px;
+      overflow:hidden;
+    }
+    .chart-hit{
+      position:absolute;
+      top:0;
+      bottom:0;
+      width:14.285%;
+      cursor:pointer;
+    }
+    .chart-hit:hover{
+      background:rgba(148,163,184,.04);
+    }
+    .chart-tooltip{
+      position:absolute;
+      min-width:120px;
+      max-width:180px;
+      padding:8px 10px;
+      border-radius:12px;
+      background:rgba(255,255,255,.98);
+      box-shadow:0 10px 25px rgba(15,23,42,.32);
+      font-size:11px;
+      color:#0f172a;
+      pointer-events:none;
+      transform:translateX(-50%);
+      z-index:10;
+    }
+    .chart-tooltip-title{
+      font-weight:700;
+      margin-bottom:4px;
+    }
+    .chart-tooltip-row{
+      display:flex;
+      justify-content:space-between;
+      gap:8px;
+    }
+    .chart-tooltip-label{
+      color:rgba(100,116,139,.95);
+    }
+    #ttEnergyValue{
+      color:#3b82f6;
+      font-weight:600;
+    }
+    #ttNutriValue{
+      color:#e11d48;
+      font-weight:600;
+    }
+
+    /* 통계 카드 */
+    .stat-card{
+      border-radius:18px;
+      border:1px solid rgba(148,163,184,.18);
+    }
+    .stat-card--energy{
+      background:linear-gradient(135deg, rgba(59,130,246,.08), rgba(79,70,229,.02));
+    }
+    .stat-card--nutrition{
+      background:linear-gradient(135deg, rgba(244,63,94,.08), rgba(251,113,133,.02));
+    }
+    .stat-card--corr{
+      background:linear-gradient(135deg, rgba(16,185,129,.08), rgba(22,163,74,.02));
+    }
+    .stat-value{
+      display:inline-flex;
+      align-items:center;
+      padding:4px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.9);
+      box-shadow:0 4px 10px rgba(15,23,42,.06);
+      font-size:20px;
+      font-weight:900;
+      margin-top:6px;
+    }
+    .stat-value--energy{ color:#3b3fb6; }
+    .stat-value--nutrition{ color:#db2777; }
+    .stat-value--corr{ color:#166534; }
+
+    /* 달력 */
+    .calendar-header {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      margin-bottom:4px;
+    }
+    .calendar-title {
+      font-weight:900;
+      font-size:15px;
+    }
+    .calendar-nav-btn {
+      width:28px;
+      height:28px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.35);
+      background:rgba(248,250,252, .95);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:16px;
+      cursor:pointer;
+    }
+    .calendar-weekdays {
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      font-size:11px;
+      text-align:center;
+      margin-top:4px;
+      color:rgba(100,116,139,.95);
+    }
+    .calendar-grid {
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      gap:4px;
+      margin-top:6px;
+    }
+    .calendar-cell {
+      text-align:center;
+      padding:5px 0;
+      border-radius:10px;
+      font-size:12px;
+      color:rgba(100,116,139,.95);
+      cursor:pointer;
+    }
+    .calendar-cell.has-entry {
+      background:rgba(22,163,74,.10);
+      color:#166534;
+      font-weight:600;
+    }
+    .calendar-cell.today {
+      border:1px solid rgba(34,197,94,.85);
+      box-shadow:0 0 0 1px rgba(255,255,255,.9);
+    }
+    .calendar-cell.selected {
+      outline:2px solid rgba(79,70,229,.7);
+      outline-offset:1px;
+    }
+    .calendar-cell.empty {
+      opacity:0;
+      pointer-events:none;
+    }
+    .calendar-legend {
+      margin-top:6px;
+      font-size:11px;
+      color:var(--muted);
+    }
+    .calendar-legend span.dot {
+      display:inline-block;
+      width:10px;
+      height:10px;
+      border-radius:999px;
+      background:rgba(34,197,94,.85);
+      margin-right:4px;
+      vertical-align:middle;
+    }
+  </style>
+</head>
+<body class="page" data-page="tracker">
+  <div class="app">
+    <main class="main">
+      <div class="panel">
+        <div class="header">
+          <div class="brand">
+            <div class="logo" aria-hidden="true">
+              <img class="logo-img" src="../assets/logo-leaf.svg" alt="Healthy Meal logo"/>
+            </div>
+            <div class="brand-text">
+              <h1>Healthy Meal</h1>
+              <p data-i18n="brand_tagline">영양을 중심으로, 꾸준히</p>
+            </div>
+          </div>
+
+          <div class="top-actions">
+            <div class="lang" aria-label="Language">
+              <span>Lang</span>
+              <button type="button" data-set-lang="ko">KO</button>
+              <button type="button" data-set-lang="ru">RU</button>
+              <button type="button" data-set-lang="en">EN</button>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;"></div>
+          </div>
+        </div>
+
+        <div class="content">
+          <h2 class="title" data-i18n="tracker_title">건강 트래커</h2>
+          <p class="subtitle" data-i18n="tracker_sub">영양이 건강에 미치는 영향을 추적하세요</p>
+
+          <!-- 수면 -->
+          <div class="section">
+            <div class="card pad">
+              <div style="display:flex;align-items:center;gap:10px;font-weight:900;">
+                <span class="pill">🌙</span> <span data-i18n="sleep">수면 시간</span>
+              </div>
+
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">
+                <div style="color:var(--muted);font-size:13px" data-i18n="today_sleep">오늘 수면</div>
+                <div class="pill" id="sleepLabel">7시간</div>
+              </div>
+
+              <input id="sleep" type="range" min="0" max="12" value="7" style="width:100%;margin-top:10px"/>
+
+              <div class="note sleep-good" id="sleepNote" style="margin-top:10px">
+                <span id="sleepReaction" data-i18n="sleep_react_ok">✓ 훌륭해요! 권장 수면 시간을 지키고 있어요</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 기분 -->
+          <div class="section">
+            <div class="card pad" style="background: rgba(255,235,244,.78); border-color: rgba(226,67,88,.12);">
+              <div style="display:flex;align-items:center;gap:10px;font-weight:900;">
+                <span class="pill" style="background: rgba(226,67,88,.10); color:#9d174d; border-color: rgba(226,67,88,.18);">❤</span>
+                <span data-i18n="mood">기분 & 컨디션</span>
+              </div>
+
+              <div class="note" style="margin-top:10px" data-i18n="mood_q">오늘 기분은 어떠세요?</div>
+
+              <div class="row cols-3" style="margin-top:10px">
+                <label class="mini card soft mood-card" style="padding:12px; text-align:center; cursor:pointer;">
+                  <div style="font-size:22px">😊</div>
+                  <div style="margin-top:6px; font-weight:900" data-i18n="mood_best">최고</div>
+                  <input type="radio" name="mood" value="best" style="display:none"/>
+                </label>
+                <label class="mini card soft mood-card" style="padding:12px; text-align:center; cursor:pointer;">
+                  <div style="font-size:22px">😐</div>
+                  <div style="margin-top:6px; font-weight:900" data-i18n="mood_ok">보통</div>
+                  <input type="radio" name="mood" value="ok" checked style="display:none"/>
+                </label>
+                <label class="mini card soft mood-card" style="padding:12px; text-align:center; cursor:pointer;">
+                  <div style="font-size:22px">😴</div>
+                  <div style="margin-top:6px; font-weight:900" data-i18n="mood_tired">피곤</div>
+                  <input type="radio" name="mood" value="tired" style="display:none"/>
+                </label>
+              </div>
+
+              <div id="moodNote" class="note" style="margin-top:8px; font-size:12px; color:var(--muted);">
+                오늘 기분도 함께 기록해둘게요.
+              </div>
+            </div>
+          </div>
+
+          <!-- 물 -->
+          <div class="section">
+            <div class="card pad" style="background: rgba(236,253,245,.9); border-color: rgba(22,163,74,.15);">
+              <div style="display:flex;align-items:center;gap:10px;font-weight:900;">
+                <span class="pill" style="background: rgba(22,163,74,.08); color:#166534; border-color: rgba(22,163,74,.22);">💧</span>
+                <span data-i18n="water_title">물 섭취</span>
+              </div>
+
+              <div class="water-row">
+                <button type="button" class="water-btn" id="waterMinus">−</button>
+
+                <div class="water-dots">
+                  <!-- 20 dots = 0.1L → 2.0L -->
+                  <div class="water-dot" data-water-dot="1"></div>
+                  <div class="water-dot" data-water-dot="2"></div>
+                  <div class="water-dot" data-water-dot="3"></div>
+                  <div class="water-dot" data-water-dot="4"></div>
+                  <div class="water-dot" data-water-dot="5"></div>
+                  <div class="water-dot" data-water-dot="6"></div>
+                  <div class="water-dot" data-water-dot="7"></div>
+                  <div class="water-dot" data-water-dot="8"></div>
+                  <div class="water-dot" data-water-dot="9"></div>
+                  <div class="water-dot" data-water-dot="10"></div>
+                  <div class="water-dot" data-water-dot="11"></div>
+                  <div class="water-dot" data-water-dot="12"></div>
+                  <div class="water-dot" data-water-dot="13"></div>
+                  <div class="water-dot" data-water-dot="14"></div>
+                  <div class="water-dot" data-water-dot="15"></div>
+                  <div class="water-dot" data-water-dot="16"></div>
+                  <div class="water-dot" data-water-dot="17"></div>
+                  <div class="water-dot" data-water-dot="18"></div>
+                  <div class="water-dot" data-water-dot="19"></div>
+                  <div class="water-dot" data-water-dot="20"></div>
+                </div>
+
+                <button type="button" class="water-btn" id="waterPlus">+</button>
+              </div>
+              <div class="water-label" id="waterLabel">
+                <span id="waterCurrentLiters">0.0</span> L (
+                <span id="waterCupsCount">0</span>
+                <span id="waterCupsUnit" data-i18n="water_cups_unit">잔</span>
+                ) / <span id="waterGoalLiters">2.0</span> L
+              </div>
+            </div>
+          </div>
+
+          <!-- 저장 버튼 -->
+          <div class="section">
+            <button class="btn" id="saveTrackerBtn" data-i18n="save_today">오늘의 데이터 저장하기</button>
+          </div>
+
+          <!-- 에너지 vs 영양 -->
+          <div class="section">
+            <div class="card pad">
+              <div style="display:flex;align-items:flex-start;gap:10px;">
+                <span class="pill">📈</span>
+                <div>
+                  <div style="font-weight:900" data-i18n="chart_title">에너지 vs 영양 점수</div>
+                  <div style="color:var(--muted); font-size:13px" data-i18n="chart_sub">식사 품질과 에너지 수준의 상관관계</div>
+                </div>
+              </div>
+
+              <div class="chart-box" id="chartBox">
+                <svg viewBox="0 0 320 170" width="100%" height="170" aria-label="Chart">
+                  <path d="M20 20V150H310" stroke="rgba(31,34,48,.18)" fill="none"/>
+                  <g fill="none" stroke="rgba(31,34,48,.10)">
+                    <path d="M20 40H310"/><path d="M20 70H310"/><path d="M20 100H310"/><path d="M20 130H310"/>
+                  </g>
+
+                  <!-- energy line -->
+                  <path d="M20 70 L65 60 L110 95 L155 65 L200 100 L245 70 L290 60"
+                        stroke="rgba(91,91,214,.85)" stroke-width="3" fill="none"/>
+                  <g fill="rgba(91,91,214,.85)">
+                    <circle cx="20" cy="70" r="4"/><circle cx="65" cy="60" r="4"/><circle cx="110" cy="95" r="4"/>
+                    <circle cx="155" cy="65" r="4"/><circle cx="200" cy="100" r="4"/><circle cx="245" cy="70" r="4"/><circle cx="290" cy="60" r="4"/>
+                  </g>
+
+                  <!-- nutrition line -->
+                  <path d="M20 55 L65 45 L110 70 L155 35 L200 65 L245 55 L290 50"
+                        stroke="rgba(226,67,88,.85)" stroke-width="3" fill="none"/>
+                  <g fill="rgba(226,67,88,.85)">
+                    <circle cx="20" cy="55" r="4"/><circle cx="65" cy="45" r="4"/><circle cx="110" cy="70" r="4"/>
+                    <circle cx="155" cy="35" r="4"/><circle cx="200" cy="65" r="4"/><circle cx="245" cy="55" r="4"/><circle cx="290" cy="50" r="4"/>
+                  </g>
+
+                  <g font-size="10" fill="rgba(31,34,48,.55)">
+                    <text x="16" y="164">월</text><text x="61" y="164">화</text><text x="106" y="164">수</text>
+                    <text x="151" y="164">목</text><text x="196" y="164">금</text><text x="241" y="164">토</text><text x="286" y="164">일</text>
+                  </g>
+                </svg>
+
+                <!-- hover hit 영역 -->
+                <div class="chart-hit" data-day="0" style="left:0%;"></div>
+                <div class="chart-hit" data-day="1" style="left:14.285%;"></div>
+                <div class="chart-hit" data-day="2" style="left:28.57%;"></div>
+                <div class="chart-hit" data-day="3" style="left:42.855%;"></div>
+                <div class="chart-hit" data-day="4" style="left:57.14%;"></div>
+                <div class="chart-hit" data-day="5" style="left:71.425%;"></div>
+                <div class="chart-hit" data-day="6" style="left:85.71%;"></div>
+
+                <div id="chartTooltip" class="chart-tooltip hidden">
+                  <div class="chart-tooltip-title">Mon</div>
+                  <div class="chart-tooltip-row">
+                    <span class="chart-tooltip-label">Energy</span>
+                    <span id="ttEnergyValue">80 / 100</span>
+                  </div>
+                  <div class="chart-tooltip-row">
+                    <span class="chart-tooltip-label">Nutrition</span>
+                    <span id="ttNutriValue">82 / 100</span>
+                  </div>
+                </div>
+              </div>
+
+			  <div class="row cols-1" style="margin-top:10px; gap:10px;">
+			    <div class="card pad soft">
+			      <div style="color:var(--muted); font-size:12px" data-i18n="avg_energy">평균 에너지</div>
+			      <div style="font-size:22px; font-weight:900; color:#3b3fb6;">77%</div>
+			    </div>
+			    <div class="card pad soft" style="background: rgba(255,235,244,.78);">
+			      <div style="color:var(--muted); font-size:12px" data-i18n="avg_nutri">평균 영양</div>
+			      <div style="font-size:22px; font-weight:900; color:#db2777;">86%</div>
+			    </div>
+			    <div class="card pad soft" style="background: rgba(236,255,244,.85);">
+			      <div style="color:var(--muted); font-size:12px" data-i18n="corr">상관도</div>
+			      <div style="font-size:20px; font-weight:900; color:#166534;" data-i18n="corr_high">높음</div>
+			    </div>
+			  </div>
+            </div>
+          </div>
+
+          <!-- 달력 -->
+          <div class="section">
+            <div class="card pad">
+              <div class="calendar-header">
+                <button type="button" class="calendar-nav-btn" id="prevMonthBtn">‹</button>
+                <div class="calendar-title" id="calendarMonthLabel">2026년 1월</div>
+                <button type="button" class="calendar-nav-btn" id="nextMonthBtn">›</button>
+              </div>
+
+              <div class="calendar-weekdays" id="calendarWeekdays">
+                <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
+              </div>
+
+              <div id="calendarGrid" class="calendar-grid"></div>
+
+              <div class="calendar-legend">
+                <span class="dot"></span>
+                <span data-i18n="calendar_legend">색이 있는 날짜는 기록이 있는 날이에요.</span>
+              </div>
+            </div>
+          </div>
+		  
+		  <!-- 하루 요약 카드 (달력 아래) -->
+		  <div class="section" id="daySummarySection" style="display:none;">
+		    <div class="card pad day-summary-card" id="daySummaryCard">
+		      <div class="day-summary-header">
+		        <span class="day-summary-title" data-i18n="summary_title">하루 기록 요약</span>
+		        <span class="day-summary-date" id="summaryDate">2026-01-07</span>
+		      </div>
+
+		      <dl class="day-summary-list" id="summaryContent">
+		        <!-- JS에서 채워짐 -->
+		      </dl>
+
+		      <div class="day-summary-comment" id="summaryComment"></div>
+		    </div>
+		  </div>
+
+
+          <!-- 로그인 안 되어 있으면 보호 -->
+          <script>
+            (function () {
+              var uid = localStorage.getItem("userId");
+              if (!uid) {
+                alert("로그인이 필요합니다.");
+                window.location.href = "./login.html";
+              }
+            })();
+          </script>
+
+        </div>
+      </div>
+    </main>
+
+    <!-- bottom nav -->
+    <nav class="bottom-nav" aria-label="Bottom Navigation">
+      <a class="nav-item" data-nav="home" href="./home.html">
+        <div class="dot">
+          <svg viewBox="0 0 24 24"><path d="M12 3l9 8h-3v10h-5v-6H11v6H6V11H3l9-8z"/></svg>
+        </div>
+        <div data-i18n="nav_home">홈</div>
+      </a>
+      <a class="nav-item" data-nav="plan" href="./planner.html">
+        <div class="dot">
+          <svg viewBox="0 0 24 24"><path d="M7 2h2v2h6V2h2v2h3v18H4V4h3V2zm13 6H6v12h14V8z"/></svg>
+        </div>
+        <div data-i18n="nav_plan">계획</div>
+      </a>
+      <a class="nav-item" data-nav="tracker" href="./tracker.html">
+        <div class="dot">
+          <svg viewBox="0 0 24 24"><path d="M3 13h4l2-6 4 14 3-9h5v2h-4z"/></svg>
+        </div>
+        <div data-i18n="nav_tracker">트래커</div>
+      </a>
+      <a class="nav-item" data-nav="profile" href="./profile.html">
+        <div class="dot">
+          <svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4zm0 2c-4.4 0-8 2.2-8 5v3h16v-3c0-2.8-3.6-5-8-5z"/></svg>
+        </div>
+        <div data-i18n="nav_profile">프로필</div>
+      </a>
+    </nav>
+  </div>
+
+  <!-- 공통 앱 스크립트 -->
+  <script src="../assets/app.js"></script>
+  <script>
+    HM.setActiveNav("tracker");
+    HM.ensureSession();
+  </script>
+
+  <!-- 트래커 전용 로직 -->
+  <script>
+    const API_BASE = "http://localhost:8083";
+    const userId   = Number(localStorage.getItem("userId"));
+
+    const sleepInput   = document.getElementById("sleep");
+    const sleepLabel   = document.getElementById("sleepLabel");
+    const sleepNote    = document.getElementById("sleepNote");
+    const sleepReaction= document.getElementById("sleepReaction");
+    const moodInputs   = document.querySelectorAll('input[name="mood"]');
+    const saveBtn      = document.getElementById("saveTrackerBtn");
+    const moodCards    = document.querySelectorAll(".mood-card");
+    const moodNoteEl   = document.getElementById("moodNote");
+
+    // 평균/상관도
+    const avgEnergyEl = document.getElementById("avgEnergyValue");
+    const avgNutriEl  = document.getElementById("avgNutriValue");
+    const corrTextEl  = document.getElementById("corrText");
+
+    // 물
+    const waterMinusBtn = document.getElementById("waterMinus");
+    const waterPlusBtn  = document.getElementById("waterPlus");
+    const waterDots     = document.querySelectorAll(".water-dot");
+    const waterCurrentLitersEl = document.getElementById("waterCurrentLiters");
+    const waterCupsCountEl     = document.getElementById("waterCupsCount");
+    const waterCupsUnitEl      = document.getElementById("waterCupsUnit");
+    const waterGoalLitersEl    = document.getElementById("waterGoalLiters");
+    const WATER_GOAL           = 20; // 0.1L step → 2.0 L
+    let waterCount             = 0;
+
+    // 그래프
+    const chartBox   = document.getElementById("chartBox");
+    const tooltipEl  = document.getElementById("chartTooltip");
+    const ttEnergyEl = document.getElementById("ttEnergyValue");
+    const ttNutriEl  = document.getElementById("ttNutriValue");
+    const hitAreas   = document.querySelectorAll(".chart-hit");
+
+    const weekData = {
+      energy:   [78, 82, 70, 95, 88, 80, 76],
+      nutrition:[80, 79, 72, 90, 86, 83, 79]
+    };
+
+    // 달력
+    const calendarGrid = document.getElementById("calendarGrid");
+    const monthLabelEl = document.getElementById("calendarMonthLabel");
+    const prevMonthBtn = document.getElementById("prevMonthBtn");
+    const nextMonthBtn = document.getElementById("nextMonthBtn");
+    const weekdaysRow  = document.getElementById("calendarWeekdays");
+
+    const today = new Date();
+    let currentYear  = today.getFullYear();
+    let currentMonth = today.getMonth() + 1; // 1~12
+    let selectedCell = null;
+	let lastSelectedDateStr = null; 
+
+    function pad2(n){ return n < 10 ? "0"+n : ""+n; }
+
+    // 언어 코드 가져오기 (HM.getLang 우선)
+    function getCurrentLang() {
+      if (window.HM && typeof HM.getLang === "function") {
+        return HM.getLang();
+      }
+      return (localStorage.getItem("hm_lang") || "ko").toLowerCase();
+    }
+
+    // 기분 메시지 사전
+    const MOOD_MSG_DICT = (window.HM && HM.MOOD_MSG_I18N) ? HM.MOOD_MSG_I18N : {
+      best: {
+        ko: "오늘 기분 최고네요! 이런 날의 식사 패턴도 함께 기록해두면 좋아요.",
+        en: "You’re feeling great today! It’s a good idea to log your meals on days like this.",
+        ru: "Сегодня у вас отличное настроение! Полезно записывать, что вы едите в такие дни."
+      },
+      ok: {
+        ko: "보통 컨디션이에요. 며칠 간의 흐름을 함께 보는 게 중요해요.",
+        en: "You’re feeling okay. It’s important to look at the pattern over several days.",
+        ru: "Обычное состояние. Важно смотреть на общее состояние за несколько дней."
+      },
+      tired: {
+        ko: "조금 피곤한 하루였어요. 수면·수분 상태를 같이 보면서 패턴을 찾아볼까요?",
+        en: "You’re a bit tired today. Let’s check your sleep and water intake together.",
+        ru: "Сегодня вы немного устали. Давайте посмотрим вместе на сон и потребление воды."
+      }
+    };
+
+    // 수면 메시지 사전 (좋음/보통/부족)
+    const SLEEP_MSG_DICT = {
+      good: {
+        ko: "푹 잘 잤어요! 오늘도 좋은 컨디션을 기대해볼 수 있어요.",
+        en: "You slept well! You can expect good energy today.",
+        ru: "Вы хорошо выспались! Можно ожидать хорошее самочувствие."
+      },
+      mid: {
+        ko: "나쁘지 않은 수면이에요. 내일은 조금 더 규칙적으로 자보는 건 어때요?",
+        en: "Your sleep was okay. Maybe try a more regular schedule tomorrow.",
+        ru: "Сон был неплохим. Может, завтра лечь пораньше?"
+      },
+      bad: {
+        ko: "수면이 많이 부족해요. 오늘은 카페인을 줄이고, 일찍 쉬는 게 좋아요.",
+        en: "Sleep was quite short. Try to rest early and go easy on caffeine today.",
+        ru: "Вы мало спали. Лучше сегодня лечь пораньше и не перебарщивать с кофеином."
+      }
+    };
+
+    // 물 렌더
+    function renderWater() {
+      waterDots.forEach((dot, idx) => {
+        const n = idx + 1;
+        dot.classList.toggle("filled", n <= waterCount);
+      });
+
+      const liters = (waterCount * 0.1).toFixed(1);
+      const goalL  = (WATER_GOAL * 0.1).toFixed(1);
+      const cups   = waterCount;
+
+      if (waterCurrentLitersEl) waterCurrentLitersEl.textContent = liters;
+      if (waterCupsCountEl)     waterCupsCountEl.textContent     = cups;
+      if (waterGoalLitersEl)    waterGoalLitersEl.textContent    = goalL;
+
+      // 단위는 app.js의 water_cups_unit 활용
+      let unitText = "잔";
+      if (window.HM && typeof HM.t === "function") {
+        unitText = HM.t("water_cups_unit");
+      } else {
+        const lang = getCurrentLang();
+        if (lang === "en") unitText = "cups";
+        else if (lang === "ru") unitText = "стакан(ов)";
+      }
+      if (waterCupsUnitEl) {
+        waterCupsUnitEl.textContent = unitText;
+      }
+
+      waterMinusBtn.disabled = (waterCount === 0);
+      waterPlusBtn.disabled  = (waterCount === WATER_GOAL);
+    }
+
+    if (waterMinusBtn) {
+      waterMinusBtn.addEventListener("click", () => {
+        if (waterCount > 0) {
+          waterCount -= 1;
+          renderWater();
+        }
+      });
+    }
+    if (waterPlusBtn) {
+      waterPlusBtn.addEventListener("click", () => {
+        if (waterCount < WATER_GOAL) {
+          waterCount += 1;
+          renderWater();
+        }
+      });
+    }
+
+    // 수면 UI 업데이트 (라벨 + 색 + 메시지)
+    function updateSleepUI(hours) {
+      if (sleepLabel) {
+        sleepLabel.textContent = `${hours}시간`;
+      }
+      if (!sleepNote || !sleepReaction) return;
+
+      sleepNote.classList.remove("sleep-good","sleep-mid","sleep-bad");
+
+      let level = "mid";
+      if (hours >= 7 && hours <= 9) {
+        level = "good";
+        sleepNote.classList.add("sleep-good");
+      } else if (hours <= 4) {
+        level = "bad";
+        sleepNote.classList.add("sleep-bad");
+      } else {
+        level = "mid";
+        sleepNote.classList.add("sleep-mid");
+      }
+
+      const lang = getCurrentLang();
+      const dict = SLEEP_MSG_DICT[level];
+      let msg = dict ? (dict[lang] || dict["ko"]) : "";
+      sleepReaction.textContent = msg;
+    }
+
+    if (sleepInput) {
+      sleepInput.addEventListener("input", () => {
+        const v = Number(sleepInput.value || "0");
+        updateSleepUI(v);
+      });
+    }
+
+    // 기분 UI
+    function updateMoodUI(mood) {
+      moodCards.forEach(card => {
+        const input = card.querySelector('input[name="mood"]');
+        const isCurrent = input.value === mood;
+        input.checked = isCurrent;
+        card.classList.toggle("selected", isCurrent);
+      });
+
+      if (!moodNoteEl) return;
+
+      const lang = getCurrentLang();
+      const dict = MOOD_MSG_DICT[mood] || MOOD_MSG_DICT["ok"];
+      const msg  = (dict && dict[lang]) || dict["ko"] || "";
+      moodNoteEl.textContent = msg;
+    }
+
+    moodCards.forEach(card => {
+      card.addEventListener("click", () => {
+        const input = card.querySelector('input[name="mood"]');
+        if (input) {
+          updateMoodUI(input.value);
+        }
+      });
+    });
+
+    // 그래프 툴팁 요일
+    const TOOLTIP_DOWS = {
+      ko: ["월","화","수","목","금","토","일"],
+      en: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+      ru: ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"]
+    };
+
+    function showTooltip(dayIndex, clientX){
+      if (!tooltipEl) return;
+      const lang = getCurrentLang();
+      const dows = TOOLTIP_DOWS[lang] || TOOLTIP_DOWS["ko"];
+      const label = dows[dayIndex] || dows[0];
+
+      tooltipEl.querySelector(".chart-tooltip-title").textContent = label;
+      ttEnergyEl.textContent = weekData.energy[dayIndex]  + " / 100";
+      ttNutriEl.textContent  = weekData.nutrition[dayIndex] + " / 100";
+
+      const boxRect = chartBox.getBoundingClientRect();
+      const x = clientX - boxRect.left;
+      tooltipEl.style.left = x + "px";
+      tooltipEl.style.top  = "20px";
+      tooltipEl.classList.remove("hidden");
+    }
+
+    hitAreas.forEach(area=>{
+      area.addEventListener("mouseenter", e=>{
+        const day = Number(area.dataset.day || "0");
+        showTooltip(day, e.clientX);
+      });
+      area.addEventListener("mousemove", e=>{
+        const day = Number(area.dataset.day || "0");
+        showTooltip(day, e.clientX);
+      });
+      area.addEventListener("mouseleave", ()=>{
+        tooltipEl.classList.add("hidden");
+      });
+    });
+
+    // 달력 i18n
+    const CAL_I18N = {
+      ko: {
+        dows:["일","월","화","수","목","금","토"],
+        months:["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"]
+      },
+      en: {
+        dows:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
+        months:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+      },
+      ru: {
+        dows:["Вс","Пн","Вт","Ср","Чт","Пт","Сб"],
+        months:["Янв","Фев","Мар","Апр","Май","Июн","Июл","Авг","Сен","Окт","Нов","Дек"]
+      }
+    };
+
+    function renderWeekdays(){
+      if (!weekdaysRow) return;
+      const lang = getCurrentLang();
+      const dows = (CAL_I18N[lang] || CAL_I18N["ko"]).dows;
+      const children = weekdaysRow.children;
+      for(let i=0;i<7;i++){
+        if (children[i]) children[i].textContent = dows[i];
+      }
+    }
+
+    async function loadCalendarMonth(){
+      try{
+        const res = await fetch(`${API_BASE}/api/tracker/month?userId=${userId}&year=${currentYear}&month=${currentMonth}`);
+        const data = await res.json();
+        const days = data.days || [];
+
+        const map = {};
+        days.forEach(d=>{ map[d.date] = d.hasEntry; });
+
+        const lang  = getCurrentLang();
+        const monthName = (CAL_I18N[lang] || CAL_I18N["ko"]).months[currentMonth-1];
+        if (lang === "ko")      monthLabelEl.textContent = `${currentYear}년 ${monthName}`;
+        else if (lang === "ru") monthLabelEl.textContent = `${monthName} ${currentYear} г.`;
+        else                    monthLabelEl.textContent = `${monthName} ${currentYear}`;
+
+        renderWeekdays();
+
+        const first = new Date(currentYear, currentMonth - 1, 1);
+        const firstWeekday = first.getDay(); // 0(일)~6(토)
+        const lastDay = new Date(currentYear, currentMonth, 0).getDate();
+
+        calendarGrid.innerHTML = "";
+        selectedCell = null;
+
+        for(let i=0;i<firstWeekday;i++){
+          const cell = document.createElement("div");
+          cell.className = "calendar-cell empty";
+          calendarGrid.appendChild(cell);
+        }
+
+        for(let d=1; d<=lastDay; d++){
+          const cell = document.createElement("div");
+          const dateStr = `${currentYear}-${pad2(currentMonth)}-${pad2(d)}`;
+          const hasEntry = !!map[dateStr];
+
+          cell.textContent = d;
+          cell.className = "calendar-cell";
+          if (hasEntry) cell.classList.add("has-entry");
+
+          if (currentYear===today.getFullYear() && currentMonth===(today.getMonth()+1) && d===today.getDate()){
+            cell.classList.add("today");
+          }
+
+          cell.addEventListener("click", ()=>{
+            if (selectedCell) selectedCell.classList.remove("selected");
+            selectedCell = cell;
+            cell.classList.add("selected");
+            loadDay(dateStr);
+          });
+
+          calendarGrid.appendChild(cell);
+        }
+      }catch(err){
+        console.error(err);
+      }
+    }
+
+	async function loadDay(dateStr){
+	  try{
+	    // 🔹 마지막으로 선택한 날짜 기억
+	    lastSelectedDateStr = dateStr;
+
+	    const res = await fetch(`${API_BASE}/api/tracker/day?userId=${userId}&date=${dateStr}`);
+	    const data = await res.json();
+
+	    // 기록이 없는 날짜인 경우
+	    if (!data.hasEntry || !data.entry){
+	      // 요약 카드: "기록 없음" 표시
+	      renderSummary(dateStr, null);
+
+	      // 메인 트래커 UI 기본값 (지금 로직 유지)
+	      const defaultSleep = 7;
+	      if (sleepInput) {
+	        sleepInput.value = defaultSleep;
+	        updateSleepUI(defaultSleep);
+	      }
+	      updateMoodUI("ok");
+	      waterCount = 0;
+	      renderWater();
+	      return;
+	    }
+
+	    // 기록이 있는 날짜
+	    const entry = data.entry;
+
+	    // 메인 트래커 UI (기존 로직 그대로)
+	    if (entry.sleepHours != null && sleepInput){
+	      sleepInput.value = entry.sleepHours;
+	      updateSleepUI(entry.sleepHours);
+	    }
+	    if (entry.mood) {
+	      updateMoodUI(entry.mood);
+	    } else {
+	      updateMoodUI("ok");
+	    }
+	    if (entry.waterGlasses != null){
+	      waterCount = Math.max(0, Math.min(WATER_GOAL, entry.waterGlasses));
+	      renderWater();
+	    }
+
+	    // 🔹 요약 카드도 함께 갱신
+	    renderSummary(dateStr, entry);
+
+	  }catch(err){
+	    console.error(err);
+	  }
+	}
+
+
+
+    async function loadSummary(){
+      try{
+        const res = await fetch(`${API_BASE}/api/tracker/summary/${userId}`);
+        const data = await res.json();
+        if (!data.success) return;
+        if (avgEnergyEl && data.energyScore != null){
+          avgEnergyEl.textContent = data.energyScore + "%";
+        }
+        if (avgNutriEl && data.nutritionScore != null){
+          avgNutriEl.textContent  = data.nutritionScore + "%";
+        }
+        if (corrTextEl && data.correlation){
+          let textKey = "corr_high";
+          if (data.correlation==="MID") textKey = "corr_mid";
+          else if (data.correlation==="LOW") textKey = "corr_low";
+
+          // 기본 한국어 텍스트
+          let text = "높음";
+          if (data.correlation==="MID") text = "보통";
+          else if (data.correlation==="LOW") text = "낮음";
+
+          corrTextEl.textContent = text;
+        }
+      }catch(err){
+        console.error(err);
+      }
+    }
+
+    // 저장 버튼 → 백엔드 저장
+    if (saveBtn) {
+      saveBtn.addEventListener("click", async (e)=>{
+        e.preventDefault();
+        const sleepHours = sleepInput ? Number(sleepInput.value || "0") : 0;
+        const moodEl = Array.from(moodInputs).find(m=>m.checked);
+        const mood   = moodEl ? moodEl.value : "ok";
+
+        try{
+          const res = await fetch(`${API_BASE}/api/tracker`,{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+              userId,
+              sleepHours,
+              mood,
+              waterGlasses: waterCount
+            })
+          });
+
+          const data = await res.json();
+          if (!data.success){
+            alert(data.message || "저장 중 오류가 발생했습니다.");
+            return;
+          }
+          alert("오늘의 데이터가 저장되었습니다.");
+          await loadSummary();
+          await loadCalendarMonth();
+        }catch(err){
+          console.error(err);
+          alert("서버와 통신 중 오류가 발생했습니다.");
+        }
+      });
+    }
+
+    // 달력 월 이동
+    if (prevMonthBtn) {
+      prevMonthBtn.addEventListener("click", ()=>{
+        currentMonth--;
+        if (currentMonth === 0){
+          currentMonth = 12;
+          currentYear--;
+        }
+        loadCalendarMonth();
+      });
+    }
+    if (nextMonthBtn) {
+      nextMonthBtn.addEventListener("click", ()=>{
+        currentMonth++;
+        if (currentMonth === 13){
+          currentMonth = 1;
+          currentYear++;
+        }
+        loadCalendarMonth();
+      });
+    }
+
+    // 언어 버튼 누를 때: app.js가 언어 바꾼 뒤 물/기분/달력/수면 다시 렌더
+	document.querySelectorAll("[data-set-lang]").forEach(btn=>{
+	  btn.addEventListener("click", ()=>{
+	    setTimeout(()=>{
+	      const moodEl = Array.from(moodInputs).find(m => m.checked);
+	      updateMoodUI(moodEl ? moodEl.value : "ok");
+	      renderWater();
+	      const currentSleep = sleepInput ? Number(sleepInput.value || "7") : 7;
+	      updateSleepUI(currentSleep);
+	      loadCalendarMonth();
+
+	      // 🔹 요약 카드도 현재 언어에 맞게 다시 불러오기
+	      const dateStr = lastSelectedDateStr
+	        ? lastSelectedDateStr
+	        : `${today.getFullYear()}-${pad2(today.getMonth()+1)}-${pad2(today.getDate())}`;
+	      loadDay(dateStr);
+	    }, 80);
+	  });
+	});
+
+	// 하루 요약 카드 렌더 (이모지 없이, 텍스트만)
+	// 하루 요약 카드 렌더 (메시지 없이, 다국어 지원)
+	function renderSummary(dateStr, entry){
+	  const section   = document.getElementById("daySummarySection");
+	  const dateEl    = document.getElementById("summaryDate");
+	  const contentEl = document.getElementById("summaryContent");
+	  const commentEl = document.getElementById("summaryComment");
+
+	  if (!section || !dateEl || !contentEl || !commentEl) return;
+
+	  // 카드 보이게
+	  section.style.display = "block";
+	  dateEl.textContent = dateStr;
+
+	  const lang = getCurrentLang();
+
+	  // 공통 텍스트 도우미
+	  function textNoRecord(){
+	    if (lang === "en") return "No record";
+	    if (lang === "ru") return "Нет данных";
+	    return "기록 없음";
+	  }
+
+	  function textNoDataForDay(){
+	    if (lang === "en") return "No data has been recorded for this day yet.";
+	    if (lang === "ru") return "В этот день пока нет записей.";
+	    return "아직 이 날은 기록이 없어요.";
+	  }
+
+	  function labelSleep(){
+	    if (lang === "en") return "Sleep";
+	    if (lang === "ru") return "Сон";
+	    return "수면";
+	  }
+	  function labelMood(){
+	    if (lang === "en") return "Mood";
+	    if (lang === "ru") return "Настроение";
+	    return "기분";
+	  }
+	  function labelWater(){
+	    if (lang === "en") return "Water";
+	    if (lang === "ru") return "Вода";
+	    return "물";
+	  }
+
+	  function moodTextByCode(code){
+	    if (!code) return textNoRecord();
+	    if (lang === "en"){
+	      if (code === "best")  return "Very good";
+	      if (code === "ok")    return "Normal";
+	      if (code === "tired") return "Tired";
+	    } else if (lang === "ru"){
+	      if (code === "best")  return "Отлично";
+	      if (code === "ok")    return "Нормально";
+	      if (code === "tired") return "Устало";
+	    } else {
+	      if (code === "best")  return "최고";
+	      if (code === "ok")    return "보통";
+	      if (code === "tired") return "피곤";
+	    }
+	    return code;
+	  }
+
+	  // 🔹 기록이 없을 때
+	  if (!entry){
+	    contentEl.innerHTML = `
+	      <div style="font-size:12px; text-align:center;">
+	        ${textNoDataForDay()}
+	      </div>
+	    `;
+	    commentEl.textContent = "";   // 메시지 완전 제거
+	    return;
+	  }
+
+	  // 🔹 수면 텍스트
+	  let sleepText;
+	  if (entry.sleepHours != null){
+	    if (lang === "en")      sleepText = `${entry.sleepHours} h`;
+	    else if (lang === "ru") sleepText = `${entry.sleepHours} ч`;
+	    else                    sleepText = `${entry.sleepHours}시간`;
+	  } else {
+	    sleepText = textNoRecord();
+	  }
+
+	  // 🔹 기분 텍스트
+	  const moodText = moodTextByCode(entry.mood);
+
+	  // 🔹 물 텍스트
+	  let waterText;
+	  if (entry.waterGlasses != null){
+	    const liters = (entry.waterGlasses * 0.1).toFixed(1);
+	    if (lang === "en"){
+	      waterText = `${liters} L (${entry.waterGlasses} cups)`;
+	    } else if (lang === "ru"){
+	      waterText = `${liters} л (${entry.waterGlasses} стакан(ов))`;
+	    } else {
+	      waterText = `${liters}L (${entry.waterGlasses}잔)`;
+	    }
+	  } else {
+	    waterText = textNoRecord();
+	  }
+
+	  // 🔹 이모지 없이, 라벨/값만 정리 (언어별 라벨 사용)
+	  contentEl.innerHTML = `
+	    <div class="day-summary-item">
+	      <div class="day-summary-term">${labelSleep()}</div>
+	      <div class="day-summary-desc">${sleepText}</div>
+	    </div>
+	    <div class="day-summary-item">
+	      <div class="day-summary-term">${labelMood()}</div>
+	      <div class="day-summary-desc">${moodText}</div>
+	    </div>
+	    <div class="day-summary-item">
+	      <div class="day-summary-term">${labelWater()}</div>
+	      <div class="day-summary-desc">${waterText}</div>
+	    </div>
+	  `;
+
+	  // 🔹 하루 코멘트 메시지는 완전히 제거 (깔끔하게)
+	  commentEl.textContent = "";
+	}
+
+    // 초기 상태: 오늘 날짜 기준으로 DB에서 불러오기
+    (function init(){
+      const initialSleep = sleepInput ? Number(sleepInput.value || "7") : 7;
+      updateSleepUI(initialSleep);
+      updateMoodUI("ok");
+      renderWater();
+      const todayStr = `${today.getFullYear()}-${pad2(today.getMonth()+1)}-${pad2(today.getDate())}`;
+      loadDay(todayStr);      // 오늘 DB에 있으면 그대로, 없으면 기본값
+      loadSummary();          // 지난 7일 통계
+      loadCalendarMonth();    // 이번 달 기록 표시
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Healthy Meal | Signup</title>
+  <link rel="stylesheet" href="../assets/styles.css"/>
+</head>
+<body class="page" data-page="signup">
+  <div class="app">
+    <main class="main">
+      <div class="panel">
+
+        <!-- 헤더 -->
+        <div class="header">
+          <div class="brand">
+            <div class="logo" aria-hidden="true">
+              <img class="logo-img" src="../assets/logo-leaf.svg" alt="Healthy Meal logo"/>
+            </div>
+            <div class="brand-text">
+              <h1>Healthy Meal</h1>
+              <p data-i18n="brand_tagline">영양을 중심으로, 꾸준히</p>
+            </div>
+          </div>
+
+          <div class="top-actions">
+            <div class="lang" aria-label="Language">
+              <span>Lang</span>
+              <button type="button" data-set-lang="ko">KO</button>
+              <button type="button" data-set-lang="ru">RU</button>
+              <button type="button" data-set-lang="en">EN</button>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <button
+                type="button"
+                class="icon-btn"
+                aria-label="Back"
+                onclick="history.back()">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15.5 19.5a1 1 0 0 1-.7-.3l-6.5-6.5a1 1 0 0 1 0-1.4l6.5-6.5a1 1 0 1 1 1.4 1.4L10.4 12l5.8 5.8a1 1 0 0 1-.7 1.7z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 컨텐츠: 회원가입 -->
+        <div class="note" style="margin-top:10px">
+          <div class="login">
+            <h2 class="title" data-i18n="signup">회원가입</h2>
+          </div>
+          <p class="subtitle" data-i18n="setup_sub">
+            한 달 건강한 식단 추천을 위해<br/> 
+            기본 정보를 먼저 등록해 주세요.
+          </p>
+
+          <div class="section">
+            <div class="card pad">
+              <form id="signupForm">
+                <div class="field">
+                  <div class="label" data-i18n="name">이름</div>
+                  <input
+                    class="input"
+                    type="text"
+                    id="inputName"
+                    placeholder="이름"
+                    data-i18n-ph="name"
+                    required/>
+                </div>
+
+                <div class="field">
+                  <div class="label" data-i18n="email">이메일</div>
+                  <input
+                    class="input"
+                    type="email"
+                    id="inputEmail"
+                    placeholder="이메일"
+                    data-i18n-ph="email"
+                     autocomplete="off">
+                </div>
+
+                <div class="field">
+                  <div class="label" data-i18n="password">비밀번호</div>
+                  <input
+                    class="input"
+                    type="password"
+                    id="inputPassword"
+                    placeholder="비밀번호"
+                    data-i18n-ph="password"
+                    autocomplete="new-password"/>
+                </div>
+
+                <button
+                  class="btn"
+                  type="submit"
+                  style="margin-top:14px"
+                  data-i18n="signup">
+                  회원가입 완료
+                </button>
+              </form>
+
+              <div class="helper">
+                <span>
+                    <span data-i18n="have_account">이미 계정이 있으신가요?</span>
+                  <a href="./login.html" data-i18n="go_login">로그인 하러가기</a>
+                </span>
+              </div>
+			  
+            </div>
+          </div>
+        </div>
+
+		<div class="section">
+		         <div class="card pad soft">
+		           <div class="note" data-i18n="signup_note"></div>
+		         </div>
+		       </div>
+
+      </div>
+    </main>
+  </div>
+
+    <script src="../assets/app.js"></script>
+    <script>
+      const API_BASE = "http://localhost:8083";
+	  const form          = document.getElementById("signupForm");
+	  const nameInput     = document.getElementById("inputName");
+	  const emailInput    = document.getElementById("inputEmail");
+	  const passwordInput = document.getElementById("inputPassword");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const name     = nameInput.value.trim();
+        const email    = emailInput.value.trim();
+        const password = passwordInput.value;
+
+        if (!name || !email || !password) {
+          alert("이름, 이메일, 비밀번호를 모두 입력해 주세요.");
+          return;
+        }
+
+        try {
+          const res = await fetch(`${API_BASE}/api/signup`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, password })
+          });
+
+          const data = await res.json();
+          console.log("signup result:", data);
+
+          if (!res.ok || !data.success) {
+            alert(data.message || "회원가입에 실패했습니다.");
+            return;
+          }
+
+          // 회원가입 성공 → 바로 로그인 상태로 만들고 profile-setup으로 이동
+          localStorage.setItem("userId",   String(data.userId));
+          localStorage.setItem("userName", data.name);
+          localStorage.setItem("userEmail", email);
+
+          if (window.LS && LS.session) {
+            localStorage.setItem(LS.session, "real");
+          }
+
+          alert("회원가입이 완료되었습니다.");
+          window.location.href = "./profile-setup.html";
+        } catch (err) {
+          console.error("signup error:", err);
+          alert("서버와 통신 중 오류가 발생했습니다.");
+        }
+      });
+    </script>
+  </body>
+  </html>

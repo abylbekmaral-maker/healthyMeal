@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Healthy Meal | Profile</title>
+  <link rel="stylesheet" href="../assets/styles.css"/>
+</head>
+<body>
+  <div class="app">
+    <main class="main">
+      <div class="panel">
+        <div class="header">
+          <div class="brand">
+            <div class="logo" aria-hidden="true">
+              <img class="logo-img" src="../assets/logo-leaf.svg" alt="Healthy Meal logo"/>
+            </div>
+            <div class="brand-text">
+              <h1>Healthy Meal</h1>
+              <p data-i18n="brand_tagline">영양을 중심으로, 꾸준히</p>
+            </div>
+          </div>
+
+          <div class="top-actions">
+            <div class="lang" aria-label="Language">
+              <span>Lang</span>
+              <button type="button" data-set-lang="ko">KO</button>
+              <button type="button" data-set-lang="ru">RU</button>
+              <button type="button" data-set-lang="en">EN</button>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <button class="icon-btn" type="button" aria-label="Settings" onclick="alert('Design-only demo')">
+                <svg viewBox="0 0 24 24">
+                  <path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.2 7.2 0 0 0-1.63-.94l-.36-2.54A.5.5 0 0 0 13.9 1h-3.8a.5.5 0 0 0-.49.42l-.36 2.54c-.58.23-1.12.54-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.71 7.48a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.13.22.39.3.6.22l2.39-.96c.5.4 1.05.71 1.63.94l.36 2.54c.05.24.25.42.49.42h3.8c.24 0 .44-.18.49-.42l.36-2.54c.58-.23 1.12-.54 1.63-.94l2.39.96c.22.09.47 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="content">
+          <h2 class="title" data-i18n="profile_title">계정 & 프로필</h2>
+          <p class="subtitle" data-i18n="profile_sub">개인 정보 및 설정 관리</p>
+
+          <!-- 상단 프로필 카드 -->
+          <div class="section">
+            <div class="card pad">
+              <div style="display:flex; gap:12px; align-items:center;">
+                <div class="logo" style="width:54px;height:54px;border-radius:20px;">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4zm0 2c-4.4 0-8 2.2-8 5v3h16v-3c0-2.8-3.6-5-8-5z"/>
+                  </svg>
+                </div>
+                <div>
+                  <!-- 🔹 JS에서 유저 이름/이메일로 채움 -->
+                  <div id="profileDisplayName" style="font-weight:900; font-size:18px">사용자 이름</div>
+                  <div id="profileDisplayEmail" style="color:var(--muted); font-size:13px">email@example.com</div>
+                </div>
+                <div style="margin-left:auto; width:10px;height:10px;border-radius:999px;background:#22c55e; border:2px solid #fff;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 개인 정보 -->
+          <div class="section">
+            <div class="card pad">
+              <div style="display:flex;align-items:center;gap:10px;font-weight:900;">
+                <span class="pill">👤</span> <span data-i18n="personal">개인 정보</span>
+              </div>
+
+              <div class="field">
+                <div class="label" data-i18n="name">이름</div>
+                <input class="input" id="profileNameInput" />
+              </div>
+
+              <div class="field">
+                <div class="label" data-i18n="email_addr">이메일 주소</div>
+                <input class="input" id="profileEmailInput" />
+              </div>
+
+              <div class="section">
+                <div style="display:flex;align-items:center;gap:10px;font-weight:900;">
+                  <span class="pill">🔒</span> <span data-i18n="pw_change">비밀번호 변경</span>
+                </div>
+
+                <div class="field">
+                  <div class="label" data-i18n="cur_pw">현재 비밀번호</div>
+                  <input class="input" type="password" id="currentPassword"/>
+                </div>
+
+                <div class="field">
+                  <div class="label" data-i18n="new_pw">새 비밀번호</div>
+                  <input class="input" type="password" id="newPassword"/>
+                </div>
+
+				<div class="section">
+                <button class="btn" id="changePwBtn" data-i18n="pw_change">비밀번호 변경</button>
+				<div id="toast" class="note good hidden" style="margin-top:10px">Saved ✓</div>
+              </div>
+
+          <!-- 의료 정보 -->
+          <div class="section">
+            <div class="card pad" style="background: rgba(255,235,244,.78); border-color: rgba(226,67,88,.14);">
+              <div style="display:flex;align-items:center;gap:10px;font-weight:900;">
+                <span class="pill" style="background: rgba(226,67,88,.10); color:#9d174d; border-color: rgba(226,67,88,.18);">❤</span>
+                <div>
+                  <div data-i18n="medical">의료 정보</div>
+                  <div style="color:var(--muted); font-size:13px" data-i18n="medical_sub">맞춤형 식단 계획을 위한 정보</div>
+                </div>
+              </div>
+
+              <div class="section">
+                <h2 style="margin:0 0 8px" data-i18n="diet">식이 제한 및 알레르기</h2>
+                <div class="row cols-2">
+                  <!-- 🔹 value / name="diet" (DB notes랑 연결) -->
+                  <label class="chip">
+                    <input type="checkbox" name="diet" value="gluten"/>
+                    <span data-i18n="gluten">글루텐 프리</span>
+                  </label>
+                  <label class="chip">
+                    <input type="checkbox" name="diet" value="dairy"/>
+                    <span data-i18n="dairy">유제품 프리</span>
+                  </label>
+                  <label class="chip">
+                    <input type="checkbox" name="diet" value="sugar"/>
+                    <span data-i18n="sugar">무설탕</span>
+                  </label>
+				  <label class="chip">
+				                     <input type="checkbox" name="diet" value="nuts"/>
+				                     <span data-i18n="nuts">견과류 프리</span>
+				                   </label>
+                  <label class="chip">
+                    <input type="checkbox" name="diet" value="veg"/>
+                    <span data-i18n="veg">채식주의</span>
+                  </label>
+				  </label>
+				                   <label class="chip">
+				                     <input type="checkbox" name="diet" value="vegan"/>
+				                     <span data-i18n="vegan">비건</span>
+				                   </label>
+                </div>
+              </div>
+
+              <div class="section">
+                <div class="note warn">
+                  <strong data-i18n="health_state">건강 상태</strong><br/>
+                  <span data-i18n="health_state_sub">영양 섭취에 영향을 줄 수 있는 건강 상태를 선택하세요</span>
+                </div>
+
+                <!-- 건강 상태는 지금은 DB와 연결 X (디자인만 유지) -->
+				<div class="list" style="margin-top:10px">
+				  <label class="chip">
+				    <input type="checkbox" name="condition" value="diabetes"/>
+				    <span data-i18n="diabetes">당뇨</span>
+				  </label>
+
+				  <label class="chip">
+				    <input type="checkbox" name="condition" value="hypertension"/>
+				    <span data-i18n="hypertension">고혈압</span>
+				  </label>
+
+				  <label class="chip">
+				    <input type="checkbox" name="condition" value="chol"/>
+				    <span data-i18n="chol">고콜레스테롤</span>
+				  </label>
+
+				  <label class="chip">
+				    <input type="checkbox" name="condition" value="heart"/>
+				    <span data-i18n="heart">심장 질환</span>
+				  </label>
+
+				  <label class="chip">
+				    <input type="checkbox" name="condition" value="thyroid"/>
+				    <span data-i18n="thyroid">갑상선 질환</span>
+				  </label>
+
+				  <label class="chip">
+				    <input type="checkbox" name="condition" value="none"/>
+				    <span data-i18n="none">해당 없음</span>
+				  </label>
+				</div>
+              </div>
+
+              <button class="btn" type="button" id="updateMedBtn" data-i18n="update_med">
+                의료 정보 업데이트
+              </button>
+              <button class="btn danger" id="logoutBtn" data-i18n="logout">로그아웃</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+    <!-- 하단 네비 -->
+    <nav class="bottom-nav" aria-label="Bottom Navigation">
+      <a class="nav-item" data-nav="home" href="./home.html">
+        <div class="dot">
+          <svg viewBox="0 0 24 24"><path d="M12 3l9 8h-3v10h-5v-6H11v6H6V11H3l9-8z"/></svg>
+        </div>
+        <div data-i18n="nav_home">홈</div>
+      </a>
+      <a class="nav-item" data-nav="plan" href="./planner.html">
+        <div class="dot">
+          <svg viewBox="0 0 24 24"><path d="M7 2h2v2h6V2h2v2h3v18H4V4h3V2zm13 6H6v12h14V8z"/></svg>
+        </div>
+        <div data-i18n="nav_plan">계획</div>
+      </a>
+      <a class="nav-item" data-nav="tracker" href="./tracker.html">
+        <div class="dot">
+          <svg viewBox="0 0 24 24"><path d="M3 13h4l2-6 4 14 3-9h5v2h-4l-4 12-4-14-1 3H3v-2z"/></svg>
+        </div>
+        <div data-i18n="nav_tracker">트래커</div>
+      </a>
+      <a class="nav-item" data-nav="profile" href="./profile.html">
+        <div class="dot">
+          <svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4zm0 2c-4.4 0-8 2.2-8 5v3h16v-3c0-2.8-3.6-5-8-5z"/></svg>
+        </div>
+        <div data-i18n="nav_profile">프로필</div>
+      </a>
+    </nav>
+  </div>
+
+  <script src="../assets/app.js"></script>
+  <script>HM.setActiveNav("profile");</script>
+  <script>HM.ensureSession();</script>
+  <script>HM.applyI18n();</script>
+
+
+  <!-- 🔹 실제 DB와 연결되는 프로필 로직 -->
+  <script>
+    const API_BASE = "http://localhost:8083";
+
+    const userId = localStorage.getItem("userId");
+    const userName = localStorage.getItem("userName");
+    const userEmail = localStorage.getItem("userEmail");
+
+    // 로그인 안 되어 있으면 바로 내보내기
+    if (!userId) {
+      alert("로그인이 필요합니다.");
+      window.location.href = "./login.html";
+    }
+
+    // 상단/개인정보 DOM
+    const displayNameEl = document.getElementById("profileDisplayName");
+    const displayEmailEl = document.getElementById("profileDisplayEmail");
+    const nameInput = document.getElementById("profileNameInput");
+    const emailInput = document.getElementById("profileEmailInput");
+
+    if (userName) {
+      displayNameEl.textContent = userName;
+      nameInput.value = userName;
+    }
+    if (userEmail) {
+      displayEmailEl.textContent = userEmail;
+      emailInput.value = userEmail;
+    }
+
+    // 식이 제한 / 건강 상태 체크박스
+    const dietCheckboxes       = document.querySelectorAll('input[name="diet"]');
+    const conditionCheckboxes  = document.querySelectorAll('input[name="condition"]');
+    const updateMedBtn         = document.getElementById("updateMedBtn");
+    const logoutBtn            = document.getElementById("logoutBtn");
+
+    // 비밀번호 변경
+    const currentPwInput = document.getElementById("currentPassword");
+    const newPwInput     = document.getElementById("newPassword");
+    const changePwBtn    = document.getElementById("changePwBtn");
+
+    let lastProfileData = null;
+
+    // ✅ 프로필 불러오기: /api/profile/{userId}
+    async function loadProfile() {
+      try {
+        const res  = await fetch(`${API_BASE}/api/profile/${userId}`);
+        const data = await res.json();
+        console.log("profile page - load profile:", data);
+
+        if (!data.exists) {
+          lastProfileData = null;
+          // 아무 것도 없으면 체크 전부 해제
+          dietCheckboxes.forEach(cb => cb.checked = false);
+          conditionCheckboxes.forEach(cb => cb.checked = false);
+          return;
+        }
+
+        lastProfileData = data;
+
+      
+		// notes → 식이 제한 체크박스
+		if (data.notes) {
+		  const values = data.notes.split(",");
+		  dietCheckboxes.forEach(cb => {
+		    cb.checked = values.includes(cb.value);
+		  });
+		} else {
+		  dietCheckboxes.forEach(cb => cb.checked = false);
+		}
+
+		// conditions → 건강 상태 체크박스
+		if (data.conditions) {
+		  const values = data.conditions.split(",");
+		  conditionCheckboxes.forEach(cb => {
+		    cb.checked = values.includes(cb.value);
+		  });
+		} else {
+		  conditionCheckboxes.forEach(cb => cb.checked = false);
+		}
+
+
+      } catch (err) {
+        console.error(err);
+        alert("프로필 정보를 불러오는 중 오류가 발생했습니다.");
+      }
+    }
+
+    // ✅ 의료 정보(식이 제한 + 건강 상태) 업데이트: /api/profile
+    updateMedBtn.addEventListener("click", async () => {
+      const selectedDiet = Array.from(dietCheckboxes)
+        .filter(cb => cb.checked)
+        .map(cb => cb.value);
+
+      const selectedConditions = Array.from(conditionCheckboxes)
+        .filter(cb => cb.checked)
+        .map(cb => cb.value);
+
+		const body = {
+		  userId:     Number(userId),
+		  notes:      selectedDiet.length      ? selectedDiet.join(",")      : null,
+		  conditions: selectedConditions.length ? selectedConditions.join(",") : null
+		};
+
+      try {
+        const res  = await fetch(`${API_BASE}/api/profile`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+
+        const data = await res.json();
+        console.log("update medical:", data);
+
+        if (!data.success) {
+          alert(data.message || "저장 중 오류가 발생했습니다.");
+          return;
+        }
+
+        alert("의료 정보가 업데이트되었습니다.");
+        await loadProfile();   // 다시 불러와서 체크박스 상태 갱신
+      } catch (err) {
+        console.error(err);
+        alert("프로필 저장 중 오류가 발생했습니다.");
+      }
+    });
+
+    // ✅ 비밀번호 변경: /api/change-password
+    changePwBtn.addEventListener("click", async () => {
+      const currentPw = currentPwInput.value.trim();
+      const newPw     = newPwInput.value.trim();
+
+      if (!currentPw || !newPw) {
+        alert("현재 비밀번호와 새 비밀번호를 모두 입력해 주세요.");
+        return;
+      }
+      if (currentPw === newPw) {
+        alert("새 비밀번호가 현재 비밀번호와 같습니다.");
+        return;
+      }
+
+      try {
+        const res  = await fetch(`${API_BASE}/api/change-password`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: Number(userId),
+            currentPassword: currentPw,
+            newPassword:     newPw
+          })
+        });
+
+        const data = await res.json();
+        console.log("change-password:", data);
+
+        if (!data.success) {
+          alert(data.message || "비밀번호 변경에 실패했습니다.");
+          return;
+        }
+
+        alert("비밀번호가 변경되었습니다.");
+        currentPwInput.value = "";
+        newPwInput.value     = "";
+      } catch (err) {
+        console.error(err);
+        alert("서버와 연결할 수 없습니다. (비밀번호 변경 오류)");
+      }
+    });
+
+    // ✅ 로그아웃
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("userId");
+      localStorage.removeItem("userName");
+      localStorage.removeItem("userEmail");
+
+      // 혹시 세션 표시용 값 있으면 같이 제거
+      if (window.LS && LS.session) {
+        localStorage.removeItem(LS.session);
+      }
+
+      window.location.href = "./login.html";
+    });
+	const noneOption = document.querySelector('input[name="condition"][value="none"]');
+
+	conditionCheckboxes.forEach(cb => {
+	  cb.addEventListener("change", () => {
+
+	    // 🔹 '해당 없음' 선택한 경우 → 나머지 전부 비활성화
+	    if (cb === noneOption && cb.checked) {
+	      conditionCheckboxes.forEach(other => {
+	        if (other !== noneOption) {
+	          other.checked = false;
+	          other.disabled = true;
+	        }
+	      });
+	    }
+
+	    // 🔹 다른 조건 선택한 경우 → '해당 없음' 해제 + 다시 활성화
+	    if (cb !== noneOption && cb.checked) {
+	      noneOption.checked = false;
+	      conditionCheckboxes.forEach(other => {
+	        other.disabled = false;
+	      });
+	    }
+
+	    // 🔹 아무것도 선택 안 남으면 → 다시 전체 활성화
+	    const anyChecked = Array.from(conditionCheckboxes)
+	      .some(c => c.checked);
+
+	    if (!anyChecked) {
+	      conditionCheckboxes.forEach(c => c.disabled = false);
+	    }
+
+	  });
+	});
+
+
+    // 페이지 열리면 프로필 로드
+    loadProfile();
+  </script>
+  </body>
+  </html>
+

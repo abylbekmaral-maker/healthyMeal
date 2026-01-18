@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Healthy Meal | Home</title>
+  <link rel="stylesheet" href="../assets/styles.css"/>
+</head>
+
+<body class="page" data-page="home">
+  <div class="app">
+    <main class="main">
+      <div class="panel">
+
+        <div class="header">
+          <div class="brand">
+            <div class="logo" aria-hidden="true">
+              <img class="logo-img" src="../assets/logo-leaf.svg" alt="Healthy Meal logo"/>
+            </div>
+            <div class="brand-text">
+              <h1>Healthy Meal</h1>
+              <p data-i18n="brand_tagline">영양을 중심으로, 꾸준히</p>
+            </div>
+          </div>
+
+          <div class="top-actions">
+            <div class="lang" aria-label="Language">
+              <span>Lang</span>
+              <button type="button" data-set-lang="ko">KO</button>
+              <button type="button" data-set-lang="ru">RU</button>
+              <button type="button" data-set-lang="en">EN</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="content">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+            <span class="chip">
+              <span data-i18n="direction">방향</span> :
+              <strong id="profileSummary" data-i18n="dir_balanced">균형 있는 건강</strong>
+            </span>
+          </div>
+
+          <div class="note" style="margin-top:10px">
+            <h2 class="title" data-i18n="home_title">오늘의 식단</h2>
+            <div class="meal3-badge" aria-hidden="true">🍽️</div>
+
+            <p class="subtitle" data-i18n="home_sub">오늘의 영양 균형</p>
+
+            <div class="section">
+              <div class="kpi">
+                <div class="mini">
+                  <div class="t" data-i18n="protein">단백질</div>
+                  <div class="v" id="kpiProtein">—</div>
+                </div>
+                <div class="mini">
+                  <div class="t" data-i18n="fiber">식이섬유</div>
+                  <div class="v" id="kpiFiber">—</div>
+                </div>
+                <div class="mini">
+                  <div class="t" data-i18n="meals">식사 횟수</div>
+                  <div class="v" id="kpiMeals">—</div>
+                </div>
+              </div>
+
+              <div class="note" style="margin-top:10px">
+                <span data-i18n="kcal_note">칼로리(참고용)</span>:
+                <strong id="kcalValue">—</strong>
+              </div>
+            </div>
+
+            <div class="section">
+              <h2 id="mealsTitle" data-i18n="meals_guide">오늘 3끼 추천</h2>
+              <p class="hint" data-i18n="meals_guide_sub">숫자보다 ‘왜 좋은지’에 집중했어요.</p>
+            </div>
+
+            <div class="meals3" id="mealsContainer"></div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Bottom Navigation">
+      <a class="nav-item" data-nav="home" href="./home.html">
+        <div class="dot"><svg viewBox="0 0 24 24"><path d="M12 3l9 8h-3v10h-5v-6H11v6H6V11H3l9-8z"/></svg></div>
+        <div data-i18n="nav_home">홈</div>
+      </a>
+      <a class="nav-item" data-nav="plan" href="./planner.html">
+        <div class="dot"><svg viewBox="0 0 24 24"><path d="M7 2h2v2h6V2h2v2h3v18H4V4h3V2zm13 6H6v12h14V8z"/></svg></div>
+        <div data-i18n="nav_plan">계획</div>
+      </a>
+      <a class="nav-item" data-nav="tracker" href="./tracker.html">
+        <div class="dot"><svg viewBox="0 0 24 24"><path d="M3 13h4l2-6 4 14 3-9h5v2h-4l-4 12-4-14-1 3H3v-2z"/></svg></div>
+        <div data-i18n="nav_tracker">트래커</div>
+      </a>
+      <a class="nav-item" data-nav="profile" href="./profile.html">
+        <div class="dot"><svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4zm0 2c-4.4 0-8 2.2-8 5v3h16v-3c0-2.8-3.6-5-8-5z"/></svg></div>
+        <div data-i18n="nav_profile">프로필</div>
+      </a>
+    </nav>
+  </div>
+
+  <script src="../assets/app.js"></script>
+  <script>
+    HM.setActiveNav("home");
+    HM.ensureSession();
+    HM.applyI18n();
+
+    const API_BASE = "http://localhost:8083";
+
+    // ✅ lang / hm_lang 둘 다 지원 (RU인데 한국어 뜨는 문제 원인 중 하나)
+    function langParam(){
+      const raw = (localStorage.getItem("lang") || localStorage.getItem("hm_lang") || "ko").toString().trim().toLowerCase();
+      if (raw === "ru") return "RU";
+      if (raw === "en") return "EN";
+      return "KO";
+    }
+
+    function msg(key){
+      const L = langParam();
+      const map = {
+        need_plan: {
+          KO: "Planner에서 주간 플랜을 먼저 생성해 주세요.",
+          RU: "Сначала создайте недельный план в Planner.",
+          EN: "Please create a weekly plan in Planner first."
+        },
+        empty_title: {
+          KO: "식단이 아직 없습니다",
+          RU: "Пока нет рациона",
+          EN: "No meals yet"
+        },
+        meals_title: {
+          KO: (n)=>`오늘 ${n}끼 추천`,
+          RU: (n)=>`Рекомендации: ${n} прием(а) пищи`,
+          EN: (n)=>`Today's ${n} meals`
+        }
+      };
+      return map[key] ? map[key][L] : "";
+    }
+
+    // ✅ 태그 번역: HM.t("tag_high_protein") 이런 식으로 app.js에 키가 있으면 그걸 쓰고,
+    // 없으면 보기 좋게 "HIGH_PROTEIN" -> "High protein" fallback
+    function normalizeTagKey(tag){
+      const up = String(tag || "").trim().toUpperCase();
+      const map = {
+        "HIGH_PROTEIN": "tag_high_protein",
+        "LOW_CARB": "tag_low_carb",
+        "HIGH_FIBER": "tag_high_fiber",
+        "BALANCED": "tag_balanced",
+		"BALANCE": "tag_balanced",   //  줄 
+        "LOW_FAT": "tag_low_fat",
+        "LOW_CAL": "tag_low_cal"
+      };
+      return map[up] || null;
+    }
+    function niceTagFallback(tag){
+      const s = String(tag || "").trim();
+      if(!s) return "";
+      return s
+        .toLowerCase()
+        .replaceAll("_"," ")
+        .replace(/\b\w/g, (c)=> c.toUpperCase());
+    }
+    function tagText(tag){
+      const key = normalizeTagKey(tag);
+      if (key && window.HM && typeof HM.t === "function") {
+        const out = HM.t(key);
+        if (out && out !== key) return out;
+      }
+      return niceTagFallback(tag);
+    }
+
+    document.querySelectorAll("[data-set-lang]").forEach(btn=>{
+      btn.addEventListener("click", ()=> setTimeout(loadHome, 120));
+    });
+
+    document.addEventListener("DOMContentLoaded", loadHome);
+
+    async function loadHome() {
+      const uid = localStorage.getItem("userId") || "1";
+      const lang = langParam();
+
+      const selectedDate = localStorage.getItem("selectedDate");
+      const url = selectedDate
+        ? `${API_BASE}/api/home/by-date?userId=${encodeURIComponent(uid)}&date=${encodeURIComponent(selectedDate)}&lang=${encodeURIComponent(lang)}`
+        : `${API_BASE}/api/home/today?userId=${encodeURIComponent(uid)}&lang=${encodeURIComponent(lang)}`;
+
+      try{
+        const res = await fetch(url);
+        if(!res.ok){ renderEmpty(null); return; }
+
+        const data = await res.json();
+
+        if(selectedDate) localStorage.removeItem("selectedDate");
+
+        if(!data || data.active === false || !Array.isArray(data.meals) || data.meals.length === 0){
+          renderEmpty(data && data.message ? data.message : null);
+          return;
+        }
+
+        renderToday(data);
+      }catch(e){
+        console.error(e);
+        renderEmpty(null);
+      }
+    }
+
+    function renderEmpty(msgText){
+      document.getElementById("kpiProtein").textContent = "—";
+      document.getElementById("kpiFiber").textContent = "—";
+      document.getElementById("kpiMeals").textContent = "—";
+      document.getElementById("kcalValue").textContent = "—";
+
+      const box = document.getElementById("mealsContainer");
+      box.innerHTML = `
+        <div class="empty-card" style="width:100%;">
+          <div class="empty-ic" aria-hidden="true">🍽️</div>
+          <div class="empty-title">${escapeHtml(msg("empty_title"))}</div>
+          <div class="empty-sub">${escapeHtml(msgText || msg("need_plan"))}</div>
+        </div>
+      `;
+      HM.applyI18n();
+    }
+
+    function renderToday(data){
+      document.getElementById("kpiProtein").textContent = `${data.totalProtein ?? 0}g`;
+      document.getElementById("kpiFiber").textContent = `${data.totalFiber ?? 0}g`;
+      document.getElementById("kpiMeals").textContent = `${data.mealCount ?? (data.meals?.length || 0)}`;
+      document.getElementById("kcalValue").textContent = `${data.totalCalories ?? 0} kcal`;
+
+      const n = (data.meals || []).length;
+      document.getElementById("mealsTitle").textContent = msg("meals_title")(n);
+
+      const box = document.getElementById("mealsContainer");
+      box.innerHTML = "";
+
+      (data.meals || []).forEach(m=>{
+        const time = m.time || "--:--";
+        const title = m.title || "";
+        const kcal = (m.calories ?? 0);
+        const prot = (m.protein ?? 0);
+        const why = m.whyGood || "";
+
+        const tags = (m.tags || "")
+          .split(",").map(s=>s.trim()).filter(Boolean).slice(0,2);
+
+        const tagHtml = tags
+          .map(t=>`<span class="meal3-pill">${escapeHtml(tagText(t))}</span>`)
+          .join("");
+
+        const card = document.createElement("article");
+        card.className = "meal3";
+        card.innerHTML = `
+          <div class="meal3-top">
+            <div class="meal3-time">${escapeHtml(time)}</div>
+            <div class="meal3-title">${escapeHtml(title)}</div>
+            <div class="meal3-badge" aria-hidden="true">🥩🥦</div>
+          </div>
+          <div class="meal3-meta">
+            <span class="meal3-pill"><span class="meal3-strong">${kcal}kcal</span></span>
+            <span class="meal3-pill"><span class="meal3-strong">${prot}g</span> <span data-i18n="protein">단백질</span></span>
+            ${tagHtml}
+          </div>
+          <div class="meal3-why">
+            <span class="meal3-q" data-i18n="why_good">왜 좋아요?</span>
+            <span class="meal3-a">${escapeHtml(why)}</span>
+          </div>
+        `;
+        box.appendChild(card);
+      });
+
+      HM.applyI18n();
+    }
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+  </script>
+</body>
+</html>

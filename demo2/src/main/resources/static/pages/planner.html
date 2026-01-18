@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Healthy Meal | Planner</title>
+  <link rel="stylesheet" href="../assets/styles.css"/>
+
+  <style>
+    .basket-chip.checked{
+      text-decoration: line-through;
+      opacity: .55;
+    }
+  </style>
+</head>
+
+<body class="page" data-page="planner">
+  <div class="app">
+    <main class="main">
+      <div class="panel">
+
+        <div class="header">
+          <div class="brand">
+            <div class="logo" aria-hidden="true">
+              <img class="logo-img" src="../assets/logo-leaf.svg" alt="Healthy Meal logo"/>
+            </div>
+            <div class="brand-text">
+              <h1>Healthy Meal</h1>
+              <p data-i18n="brand_tagline">영양을 중심으로, 꾸준히</p>
+            </div>
+          </div>
+
+          <div class="top-actions">
+            <div class="lang" aria-label="Language">
+              <span>Lang</span>
+              <button type="button" data-set-lang="ko">KO</button>
+              <button type="button" data-set-lang="ru">RU</button>
+              <button type="button" data-set-lang="en">EN</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="content">
+
+          <div class="planner-hero">
+            <div class="planner-hero-top">
+              <div class="planner-hero-icon" aria-hidden="true">📅</div>
+              <div>
+                <h2 class="title" data-i18n="plan_title">주간 플래너</h2>
+                <p class="subtitle" data-i18n="plan_sub">일주일 식단을 미리 계획하세요</p>
+              </div>
+            </div>
+
+            <div class="planner-hero-actions">
+              <button class="btn" type="button" id="generatePlanBtn" data-i18n="ai_btn">
+                AI 주간 메뉴 생성하기
+              </button>
+              <button class="btn secondary" type="button" id="savePlanBtn" style="display:none;">
+                💾 <span data-i18n="save_plan">메뉴 저장하기</span>
+              </button>
+            </div>
+
+            <div class="planner-hero-note planner-status" id="planner-status"></div>
+          </div>
+
+          <div class="section">
+            <div class="chip" id="planner-date-chip" style="display:none;">
+              <span aria-hidden="true">📅</span>
+              <strong id="planner-year"></strong>&nbsp;<span id="planner-month"></span>
+            </div>
+
+            <div class="grid-days" id="planner-days" style="margin-top:10px;"></div>
+          </div>
+
+          <div class="section" id="shopping">
+            <div class="shopping-head">
+              <div class="shopping-title">
+                <div class="shopping-ic" aria-hidden="true">🥕</div>
+                <div>
+                  <h2 data-i18n="shopping_title">장보기 리스트</h2>
+                  <div class="shopping-sub" data-i18n="shopping_sub">플랜에 맞춰 미리 준비하세요</div>
+                </div>
+              </div>
+              <span class="pill" id="shopping-count"></span>
+            </div>
+
+            <div class="basket" id="shopping-list"></div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Bottom Navigation">
+      <a class="nav-item" data-nav="home" href="./home.html">
+        <div class="dot"><svg viewBox="0 0 24 24"><path d="M12 3l9 8h-3v10h-5v-6H11v6H6V11H3l9-8z"/></svg></div>
+        <div data-i18n="nav_home">홈</div>
+      </a>
+      <a class="nav-item" data-nav="plan" href="./planner.html">
+        <div class="dot"><svg viewBox="0 0 24 24"><path d="M7 2h2v2h6V2h2v2h3v18H4V4h3V2zm13 6H6v12h14V8z"/></svg></div>
+        <div data-i18n="nav_plan">계획</div>
+      </a>
+      <a class="nav-item" data-nav="tracker" href="./tracker.html">
+        <div class="dot"><svg viewBox="0 0 24 24"><path d="M3 13h4l2-6 4 14 3-9h5v2h-4l-4 12-4-14-1 3H3v-2z"/></svg></div>
+        <div data-i18n="nav_tracker">트래커</div>
+      </a>
+      <a class="nav-item" data-nav="profile" href="./profile.html">
+        <div class="dot"><svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4zm0 2c-4.4 0-8 2.2-8 5v3h16v-3c0-2.8-3.6-5-8-5z"/></svg></div>
+        <div data-i18n="nav_profile">프로필</div>
+      </a>
+    </nav>
+
+    <script src="../assets/app.js"></script>
+    <script>
+      HM.setActiveNav("plan");
+      HM.ensureSession();
+      HM.applyI18n();
+    </script>
+
+    <script>
+      const API_BASE = "http://localhost:8083";
+      let currentPreviewPlan = null;
+
+      function langParam(){
+        const raw = (localStorage.getItem("lang") || localStorage.getItem("hm_lang") || "ko").toString().trim().toLowerCase();
+        if (raw === "ru") return "RU";
+        if (raw === "en") return "EN";
+        return "KO";
+      }
+      function locale(){
+        const l = langParam();
+        if (l === "RU") return "ru-RU";
+        if (l === "EN") return "en-US";
+        return "ko-KR";
+      }
+      function uid(){ return localStorage.getItem("userId") || "1"; }
+
+      function msg(key){
+        const L = langParam();
+        const map = {
+          status_loaded: { KO:"저장된 주간 플랜을 불러왔어요.", RU:"Мы загрузили сохранённый недельный план.", EN:"Loaded your saved weekly plan." },
+          status_none:   { KO:"아직 저장된 플랜이 없어요.",        RU:"Пока нет сохранённого плана.",          EN:"No saved plan yet." },
+          status_generating:{ KO:"AI가 7일 플랜을 만들고 있어요...", RU:"AI генерирует план на 7 дней...", EN:"AI is generating a 7-day plan..." },
+          status_preview_ok:{ KO:"미리보기 생성 완료! 마음에 들면 저장하세요.", RU:"Превью готово! Если нравится — сохраните.", EN:"Preview ready! Save it if you like." },
+          saving: { KO:"저장 중...", RU:"Сохранение...", EN:"Saving..." },
+          generating_btn: { KO:"생성 중...", RU:"Генерация...", EN:"Generating..." },
+          empty_shop: { KO:"장보기 리스트가 비어있어요.", RU:"Список покупок пуст.", EN:"Shopping list is empty." },
+          items_unit: { KO:"품목", RU:"поз.", EN:"items" }
+        };
+        return map[key] ? map[key][L] : "";
+      }
+
+      function setPlannerStatus(text){
+        const el = document.getElementById("planner-status");
+        if(!text){ el.textContent=""; el.style.display="none"; return; }
+        el.textContent = text;
+        el.style.display = "block";
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        loadPlanner();
+        document.getElementById("generatePlanBtn").addEventListener("click", previewWeeklyPlan);
+        document.getElementById("savePlanBtn").addEventListener("click", savePreviewAsPlan);
+
+        document.querySelectorAll("[data-set-lang]").forEach(btn=>{
+          btn.addEventListener("click", ()=> setTimeout(loadPlanner, 140));
+        });
+      });
+
+      async function loadPlanner(){
+        const res = await fetch(`${API_BASE}/api/planner/current?userId=${encodeURIComponent(uid())}&lang=${encodeURIComponent(langParam())}`);
+        if(!res.ok){ showEmptyPlanner(); return; }
+
+        const data = await res.json();
+        console.log("[planner/current]", data);
+
+        if(!data || !Array.isArray(data.days) || data.days.length === 0){
+          showEmptyPlanner();
+          return;
+        }
+
+        showPlannerHeaderDate(data.startDate);
+        renderPlannerDays(data.days);
+        renderShoppingList(Array.isArray(data.shoppingList) ? data.shoppingList : []);
+
+        setPlannerStatus(msg("status_loaded"));
+        HM.applyI18n();
+      }
+
+      function showPlannerHeaderDate(startDate){
+        document.getElementById("planner-date-chip").style.display="inline-flex";
+        const sd = new Date(String(startDate) + "T00:00:00");
+
+        document.getElementById("planner-year").textContent = sd.getFullYear();
+
+        const L = langParam();
+        if(L==="RU") document.getElementById("planner-month").textContent = sd.toLocaleDateString("ru-RU",{month:"long"});
+        else if(L==="EN") document.getElementById("planner-month").textContent = sd.toLocaleDateString("en-US",{month:"long"});
+        else document.getElementById("planner-month").textContent = `${sd.getMonth()+1}월`;
+      }
+
+      // ✅ 요청: empty 영역에 AI 버튼 없음
+      function showEmptyPlanner(){
+        document.getElementById("planner-date-chip").style.display="none";
+		
+        document.getElementById("shopping-list").innerHTML = `
+          <div class="empty-basket">
+            <div class="empty-ic" aria-hidden="true">🥕</div>
+            <div class="empty-sub" data-i18n="shopping_empty_sub">플랜을 생성하면 장보기 리스트가 자동으로 채워져요.</div>
+          </div>
+        `;
+        document.getElementById("shopping-count").textContent = "";
+
+        setPlannerStatus(msg("status_none"));
+        HM.applyI18n();
+      }
+
+      async function previewWeeklyPlan(){
+        const btn = document.getElementById("generatePlanBtn");
+        btn.disabled = true;
+        const oldText = btn.textContent;
+        btn.textContent = msg("generating_btn");
+        setPlannerStatus(msg("status_generating"));
+
+        try{
+          const res = await fetch(`${API_BASE}/api/planner/preview?userId=${encodeURIComponent(uid())}&lang=${encodeURIComponent(langParam())}`, { method:"POST" });
+          if(!res.ok){ setPlannerStatus(""); alert("AI 생성 실패"); return; }
+
+          const data = await res.json();
+          if(!data || !Array.isArray(data.days) || data.days.length === 0){
+            alert("AI 응답이 비어있어요.");
+            setPlannerStatus("");
+            return;
+          }
+
+          currentPreviewPlan = data;
+          document.getElementById("savePlanBtn").style.display="inline-flex";
+
+          showPlannerHeaderDate(data.startDate);
+          renderPlannerDays(data.days);
+          renderShoppingList(Array.isArray(data.shoppingList) ? data.shoppingList : []);
+
+          setPlannerStatus(msg("status_preview_ok"));
+        }finally{
+          btn.disabled = false;
+          btn.textContent = oldText;
+          HM.applyI18n();
+        }
+      }
+
+      async function savePreviewAsPlan(){
+        if(!currentPreviewPlan){ alert("먼저 AI 미리보기를 해주세요."); return; }
+
+        const saveBtn = document.getElementById("savePlanBtn");
+        saveBtn.disabled = true;
+        setPlannerStatus(msg("saving"));
+
+        try{
+          const res = await fetch(`${API_BASE}/api/planner/save?userId=${encodeURIComponent(uid())}&lang=${encodeURIComponent(langParam())}`,{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body: JSON.stringify(currentPreviewPlan)
+          });
+
+          if(!res.ok){ alert("저장 실패"); return; }
+
+          let payload=null;
+          try{ payload = await res.json(); }catch(e){ payload=null; }
+
+          document.getElementById("savePlanBtn").style.display="none";
+          currentPreviewPlan = null;
+
+          if(payload && Array.isArray(payload.days)){
+            showPlannerHeaderDate(payload.startDate);
+            renderPlannerDays(payload.days);
+            renderShoppingList(Array.isArray(payload.shoppingList) ? payload.shoppingList : []);
+          }else{
+            await loadPlanner();
+          }
+
+          setPlannerStatus((langParam()==="RU") ? "Сохранено ✅" : (langParam()==="EN") ? "Saved ✅" : "저장 완료 ✅");
+        }finally{
+          saveBtn.disabled = false;
+          HM.applyI18n();
+        }
+      }
+
+      // ✅ 여기만 최소 수정: preview에서는 day.mealTitles가 없으니 meals[].dishName으로 fallback
+      function renderPlannerDays(days){
+        const container = document.getElementById("planner-days");
+        container.innerHTML = "";
+
+        days.forEach(day=>{
+          const dateObj = new Date(String(day.date) + "T00:00:00");
+
+          const dayDiv = document.createElement("div");
+          dayDiv.className = "day day-premium";
+
+          dayDiv.addEventListener("click", ()=>{
+            localStorage.setItem("selectedDate", String(day.date));
+            window.location.href = "./home.html";
+          });
+
+          const head = document.createElement("div");
+          head.className = "day-head day-head-clean";
+
+          const w = document.createElement("div");
+          w.className = "w";
+          w.textContent = dateObj.toLocaleDateString(locale(), { weekday:"long" });
+
+          const d = document.createElement("div");
+          d.className = "d";
+          d.textContent = dateObj.getDate();
+
+          head.appendChild(w);
+          head.appendChild(d);
+
+          const items = document.createElement("div");
+          items.className = "items";
+
+          const titles =
+            (Array.isArray(day.mealTitles) && day.mealTitles.length > 0)
+              ? day.mealTitles
+              : (Array.isArray(day.meals) ? day.meals.map(m => m && m.dishName).filter(Boolean) : []);
+
+          titles.forEach(title=>{
+            const s = document.createElement("span");
+            s.className = "meal-pill";
+            s.textContent = title;
+            items.appendChild(s);
+          });
+
+          dayDiv.appendChild(head);
+          dayDiv.appendChild(items);
+          container.appendChild(dayDiv);
+        });
+      }
+
+      // ✅ 쇼핑 체크 상태 저장
+      function shopKey(){
+        const y = document.getElementById("planner-year")?.textContent || "y";
+        const m = document.getElementById("planner-month")?.textContent || "m";
+        return `hm_shop_checked_${uid()}_${y}_${m}`;
+      }
+      function loadChecked(){
+        try{ return new Set(JSON.parse(localStorage.getItem(shopKey()) || "[]")); }
+        catch{ return new Set(); }
+      }
+      function saveChecked(set){
+        localStorage.setItem(shopKey(), JSON.stringify(Array.from(set)));
+      }
+
+      function renderShoppingList(groups){
+        const box = document.getElementById("shopping-list");
+        box.innerHTML = "";
+
+        if(!groups || groups.length === 0){
+          box.innerHTML = `
+            <div class="empty-basket">
+              <div class="empty-ic" aria-hidden="true">🥕</div>
+              <div class="empty-sub">${escapeHtml(msg("empty_shop"))}</div>
+            </div>
+          `;
+          document.getElementById("shopping-count").textContent = "";
+          return;
+        }
+
+        const checked = loadChecked();
+
+        groups.forEach(g=>{
+          const group = document.createElement("div");
+          group.className = "basket-group";
+
+          const head = document.createElement("div");
+          head.className = "basket-head";
+          head.innerHTML = `
+            <span class="basket-emoji" aria-hidden="true">${pickBasketEmoji(g.category)}</span>
+            <span class="basket-cat">${escapeHtml(g.category || "")}</span>
+          `;
+
+          const chips = document.createElement("div");
+          chips.className = "basket-chips";
+
+          (g.items || []).forEach(it=>{
+            const chip = document.createElement("span");
+            chip.className = "basket-chip";
+            chip.textContent = it;
+
+            const k = `${g.category}||${it}`;
+            if(checked.has(k)) chip.classList.add("checked");
+
+            chip.addEventListener("click",(ev)=>{
+              ev.stopPropagation();
+              chip.classList.toggle("checked");
+              if(chip.classList.contains("checked")) checked.add(k);
+              else checked.delete(k);
+              saveChecked(checked);
+            });
+
+            chips.appendChild(chip);
+          });
+
+          group.appendChild(head);
+          group.appendChild(chips);
+          box.appendChild(group);
+        });
+
+        const total = groups.reduce((a,b)=> a + ((b.items || []).length), 0);
+        document.getElementById("shopping-count").textContent = `${total} ${msg("items_unit")}`;
+      }
+
+      function pickBasketEmoji(cat){
+        const c = (cat || "").toLowerCase();
+        if (c.includes("단백") || c.includes("protein") || c.includes("белок")) return "🥩";
+        if (c.includes("채소") || c.includes("veget") || c.includes("овощ")) return "🥬";
+        if (c.includes("과일") || c.includes("fruit") || c.includes("ягод") || c.includes("фрукт")) return "🍓";
+        if (c.includes("탄수") || c.includes("carb") || c.includes("углев")) return "🍚";
+        if (c.includes("유제품") || c.includes("dairy") || c.includes("молоч")) return "🥛";
+        return "🧂";
+      }
+
+      function escapeHtml(str){
+        return String(str)
+          .replaceAll("&","&amp;")
+          .replaceAll("<","&lt;")
+          .replaceAll(">","&gt;")
+          .replaceAll('"',"&quot;")
+          .replaceAll("'","&#039;");
+      }
+    </script>
+
+  </div>
+</body>
+</html>

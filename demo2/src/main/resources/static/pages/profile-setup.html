@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Healthy Meal | Profile Setup</title>
+  <link rel="stylesheet" href="../assets/styles.css"/>
+
+  <!-- 🔹 목표 카드 선택 효과 -->
+  <style>
+    .goal-card {
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .goal-card.selected {
+      border-color: #f9739b;
+      box-shadow: 0 0 0 2px rgba(249,115,155,0.25);
+      background: rgba(255, 240, 245, 0.9);
+    }
+  </style>
+</head>
+<body class="page" data-page="profile-setup">
+
+  <div class="app">
+    <main class="main">
+      <div class="panel">
+        <div class="header">
+          <div class="brand">
+            <div class="logo" aria-hidden="true">
+              <img class="logo-img" src="../assets/logo-leaf.svg" alt="Healthy Meal logo"/>
+            </div>
+            <div class="brand-text">
+              <h1>Healthy Meal</h1>
+              <p data-i18n="brand_tagline">영양을 중심으로, 꾸준히</p>
+            </div>
+          </div>
+
+          <div class="top-actions">
+            <div class="lang" aria-label="Language">
+              <span>Lang</span>
+              <button type="button" data-set-lang="ko">KO</button>
+              <button type="button" data-set-lang="ru">RU</button>
+              <button type="button" data-set-lang="en">EN</button>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <a class="icon-btn" href="./signup.html" aria-label="Back">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15.5 19.5a1 1 0 0 1-.7-.3l-6.5-6.5a1 1 0 0 1 0-1.4l6.5-6.5a1 1 0 1 1 1.4 1.4L10.4 12l5.8 5.8a1 1 0 0 1-.7 1.7z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="content">
+          <h2 class="title" data-i18n="setup_title">건강 프로필 설정</h2>
+          <p class="subtitle" data-i18n="setup_sub">
+            정확한 맞춤 식단을 위해 정보를 입력해주세요
+          </p>
+
+          <div class="section">
+            <div class="card pad">
+              <div class="row cols-3">
+                <div class="field">
+                  <div class="label" data-i18n="age">나이</div>
+                  <input id="age" class="input" inputmode="numeric" placeholder="25" value="25"/>
+                </div>
+                <div class="field">
+                  <div class="label" data-i18n="weight">체중(kg)</div>
+                  <input id="weight" class="input" inputmode="numeric" placeholder="70" value="70"/>
+                </div>
+                <div class="field">
+                  <div class="label" data-i18n="height">키(cm)</div>
+                  <input id="height" class="input" inputmode="numeric" placeholder="170" value="170"/>
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="label" data-i18n="activity">활동량</div>
+                <select id="activity">
+                  <option value="" data-i18n-opt="activity_ph">활동량을 선택하세요</option>
+                  <option value="0" data-i18n-opt="act_0">거의 없음 (운동 안함)</option>
+                  <option value="1" data-i18n-opt="act_1">가벼움 (주 1-3일)</option>
+                  <option value="2" data-i18n-opt="act_2" selected>보통 (주 3-5일)</option>
+                  <option value="3" data-i18n-opt="act_3">활동적 (주 6-7일)</option>
+                  <option value="4" data-i18n-opt="act_4">매우 활동적 (하루 2회)</option>
+                </select>
+              </div>
+
+              <!-- 🔹 목표 설정 -->
+              <div class="section">
+                <h2 data-i18n="goal">목표 설정</h2>
+
+                <div class="list" style="gap:12px">
+                  <label class="meal-card pink goal-card selected" style="grid-template-columns: 52px 1fr;">
+                    <div class="ic" style="width:52px;height:52px">
+                      <svg viewBox="0 0 24 24">
+                        <path d="M4 12h10l-4-4 1.4-1.4L18.8 14l-7.4 7.4L10 20l4-4H4v-2z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <div class="name" data-i18n="g_loss">체중 감량</div>
+                      <div class="tags"><span class="pill">kcal</span><span class="pill">protein</span></div>
+                    </div>
+                    <input type="radio" name="goal" value="loss" checked style="display:none"/>
+                  </label>
+
+                  <label class="meal-card goal-card" style="grid-template-columns: 52px 1fr;">
+                    <div class="ic" style="width:52px;height:52px">
+                      <svg viewBox="0 0 24 24">
+                        <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm0-14a6 6 0 1 0 6 6 6 6 0 0 0-6-6zm0 10a4 4 0 1 1 4-4 4 4 0 0 1-4 4z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <div class="name" data-i18n="g_keep">체중 유지</div>
+                      <div class="tags"><span class="pill">balance</span><span class="pill">habit</span></div>
+                    </div>
+                    <input type="radio" name="goal" value="keep" style="display:none"/>
+                  </label>
+
+                  <label class="meal-card goal-card" style="grid-template-columns: 52px 1fr;">
+                    <div class="ic" style="width:52px;height:52px">
+                      <svg viewBox="0 0 24 24">
+                        <path d="M7 12h3V9h4v3h3v4h-3v3h-4v-3H7v-4z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <div class="name" data-i18n="g_gain">근육 증가</div>
+                      <div class="tags"><span class="pill">protein+</span><span class="pill">strength</span></div>
+                    </div>
+                    <input type="radio" name="goal" value="gain" style="display:none"/>
+                  </label>
+                </div>
+
+                <div class="notice" style="margin-top:10px; font-size:12px;color:var(--muted);">
+                  * 목표 카드를 클릭하면 선택됩니다.
+                </div>
+              </div>
+
+              <!-- 🔹 식이 제한 & 알레르기 -->
+              <div class="section">
+                <h2 data-i18n="diet">식이 제한 및 알레르기</h2>
+                <div class="row cols-2">
+                  <label class="chip">
+                    <input type="checkbox" name="diet" value="gluten"/>
+                    <span data-i18n="gluten">글루텐 프리</span>
+                  </label>
+                  <label class="chip">
+                    <input type="checkbox" name="diet" value="sugar"/>
+                    <span data-i18n="sugar">무설탕</span>
+                  </label>
+                  <label class="chip">
+                    <input type="checkbox" name="diet" value="dairy"/>
+                    <span data-i18n="dairy">유제품 프리</span>
+                  </label>
+                  <label class="chip">
+                    <input type="checkbox" name="diet" value="nuts"/>
+                    <span data-i18n="nuts">견과류 프리</span>
+                  </label>
+                  <label class="chip">
+                    <input type="checkbox" name="diet" value="vegan"/>
+                    <span data-i18n="vegan">비건</span>
+                  </label>
+                  <label class="chip">
+                    <input type="checkbox" name="diet" value="veg"/>
+                    <span data-i18n="veg">채식주의</span>
+                  </label>
+                </div>
+              </div>
+
+              <button class="btn" id="startBtn" style="margin-top:16px" data-i18n="start">
+                시작하기
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 🔹 공통 스크립트 -->
+  <script src="../assets/app.js"></script>
+  <script>
+    HM.setActiveNav("profile");
+    HM.ensureSession();   // 로그인 체크
+    HM.applyI18n();       // 언어 적용
+  </script>
+
+  <!-- 🔹 프로필 저장/이동 로직 -->
+  <script>
+    const API_BASE = "http://localhost:8083";
+
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      alert("로그인이 필요합니다.");
+      window.location.href = "./login.html";
+    }
+
+    const heightInput    = document.getElementById("height");
+    const weightInput    = document.getElementById("weight");
+    const activitySelect = document.getElementById("activity");
+    const ageInput       = document.getElementById("age");
+
+    const goalCards      = document.querySelectorAll(".goal-card");
+    const dietCheckboxes = document.querySelectorAll('input[name="diet"]');
+    const startBtn       = document.getElementById("startBtn");
+
+    let selectedGoal = "loss";
+    let saving = false;
+
+    // 🔹 목표 카드 선택
+    goalCards.forEach(card => {
+      card.addEventListener("click", () => {
+        goalCards.forEach(c => c.classList.remove("selected"));
+        card.classList.add("selected");
+
+        const input = card.querySelector('input[name="goal"]');
+        if (input) {
+          input.checked  = true;
+          selectedGoal   = input.value;
+        }
+      });
+    });
+
+    const checkedGoal = document.querySelector('input[name="goal"]:checked');
+    if (checkedGoal) {
+      selectedGoal = checkedGoal.value;
+    }
+
+    // 🔹 기존 프로필 불러오기
+    async function loadProfile() {
+      try {
+        const res  = await fetch(`${API_BASE}/api/profile/${userId}`);
+        const data = await res.json();
+        console.log("profile-setup load:", data);
+
+        if (!data.exists) return;
+
+        if (data.heightCm != null)   heightInput.value = data.heightCm;
+        if (data.weightKg != null)   weightInput.value = data.weightKg;
+        if (data.activityLevel)      activitySelect.value = data.activityLevel;
+
+        if (data.goal) {
+          selectedGoal = data.goal;
+          goalCards.forEach(card => {
+            const input = card.querySelector('input[name="goal"]');
+            if (input && input.value === data.goal) {
+              goalCards.forEach(c => c.classList.remove("selected"));
+              card.classList.add("selected");
+              input.checked = true;
+            }
+          });
+        }
+
+        if (data.notes) {
+          const values = data.notes.split(",");
+          dietCheckboxes.forEach(cb => {
+            cb.checked = values.includes(cb.value);
+          });
+        }
+
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // 🔹 시작하기 버튼
+    startBtn.addEventListener("click", async () => {
+      if (saving) return;     // 여러 번 클릭 방지
+      saving = true;
+      startBtn.disabled = true;
+
+      const heightVal   = heightInput.value.trim();
+      const weightVal   = weightInput.value.trim();
+      const activityVal = activitySelect.value;
+
+      const selectedDiet = Array.from(dietCheckboxes)
+        .filter(cb => cb.checked)
+        .map(cb => cb.value);
+      const notes = selectedDiet.join(",");
+
+      const body = {
+        userId:        Number(userId),
+        heightCm:      heightVal   ? Number(heightVal)   : null,
+        weightKg:      weightVal   ? Number(weightVal)   : null,
+        activityLevel: activityVal || null,
+        goal:          selectedGoal || null,
+        notes:         notes || null,
+        conditions:    null
+      };
+
+      console.log("save profile from setup:", body);
+
+      // 🔹 프론트에서도 프로필 존재 표시 (HM.ensureSession, 홈 카드에서 사용 가능)
+      try {
+        const frontProfile = {
+          age: ageInput.value.trim(),
+          height: heightVal,
+          weight: weightVal,
+          activity: activityVal,
+          goal: selectedGoal,
+          diet: selectedDiet,
+          updatedAt: new Date().toISOString()
+        };
+        localStorage.setItem("hm_profile", JSON.stringify(frontProfile));
+        localStorage.setItem("hasProfile", "true");
+      } catch (e) {
+        console.error(e);
+      }
+
+      try {
+        // 백엔드 저장 (실패해도 홈은 열 수 있게 try/catch 분리)
+        const res  = await fetch(`${API_BASE}/api/profile`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+
+        const data = await res.json();
+        console.log("profile-setup save:", data);
+
+        if (!data.success) {
+          alert(data.message || "프로필 저장에 실패했습니다.\n그래도 홈 화면으로 이동합니다.");
+        } else {
+          alert("프로필이 저장되었습니다.");
+        }
+
+      } catch (err) {
+        console.error(err);
+        alert("서버와 연결할 수 없습니다.\n그래도 홈 화면으로 이동합니다.");
+      } finally {
+        // 🔥 한 번만 눌러도 확실히 home으로 이동
+        setTimeout(() => {
+          window.location.replace("./home.html");
+        }, 150);
+      }
+    });
+	
+    loadProfile();
+  </script>
+
+</body>
+</html>
