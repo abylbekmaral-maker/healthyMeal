@@ -354,7 +354,7 @@
 
               <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">
                 <div style="color:var(--muted);font-size:13px" data-i18n="today_sleep">오늘 수면</div>
-                <div class="pill" id="sleepLabel">7시간</div>
+                <div class="pill" id="sleepLabel"  data-i18n="clock">7시간</div>
               </div>
 
               <input id="sleep" type="range" min="0" max="12" value="7" style="width:100%;margin-top:10px"/>
@@ -621,7 +621,7 @@
 
   <!-- 트래커 전용 로직 -->
   <script>
-    const API_BASE = "http://localhost:8083";
+    const API_BASE = "";
     const userId   = Number(localStorage.getItem("userId"));
 
     const sleepInput   = document.getElementById("sleep");

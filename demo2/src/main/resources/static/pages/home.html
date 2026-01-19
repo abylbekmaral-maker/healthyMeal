@@ -107,7 +107,7 @@
     HM.ensureSession();
     HM.applyI18n();
 
-    const API_BASE = "http://localhost:8083";
+    const API_BASE = "";
 
     // ✅ lang / hm_lang 둘 다 지원 (RU인데 한국어 뜨는 문제 원인 중 하나)
     function langParam(){
@@ -176,36 +176,75 @@
     });
 
     document.addEventListener("DOMContentLoaded", loadHome);
+	
+	function homeCacheKey(uid, lang){
+	  return `HM_HOME_CACHE_v1_${uid}_${lang}`;
+	}
+	function saveHomeCache(uid, lang, data){
+	  try{
+	    sessionStorage.setItem(homeCacheKey(uid, lang), JSON.stringify({
+	      ts: Date.now(),
+	      data
+	    }));
+	  }catch(e){}
+	}
+	function readHomeCache(uid, lang){
+	  try{
+	    const raw = sessionStorage.getItem(homeCacheKey(uid, lang));
+	    if(!raw) return null;
+	    const obj = JSON.parse(raw);
+	    return obj && obj.data ? obj.data : null;
+	  }catch(e){
+	    return null;
+	  }
+	}
 
-    async function loadHome() {
-      const uid = localStorage.getItem("userId") || "1";
-      const lang = langParam();
+	async function loadHome() {
+	  const uid = localStorage.getItem("userId") || "1";
+	  const lang = langParam();
 
-      const selectedDate = localStorage.getItem("selectedDate");
-      const url = selectedDate
-        ? `${API_BASE}/api/home/by-date?userId=${encodeURIComponent(uid)}&date=${encodeURIComponent(selectedDate)}&lang=${encodeURIComponent(lang)}`
-        : `${API_BASE}/api/home/today?userId=${encodeURIComponent(uid)}&lang=${encodeURIComponent(lang)}`;
+	  const selectedDate = localStorage.getItem("selectedDate");
 
-      try{
-        const res = await fetch(url);
-        if(!res.ok){ renderEmpty(null); return; }
+	  // ✅ 1) Сразу покажем кэш (только если НЕ выбран конкретный день)
+	  if(!selectedDate){
+	    const cached = readHomeCache(uid, lang);
+	    if(cached && cached.active !== false && Array.isArray(cached.meals) && cached.meals.length){
+	      renderToday(cached); // мгновенно показываем то, что было
+	    }
+	  }
 
-        const data = await res.json();
+	  const url = selectedDate
+	    ? `${API_BASE}/api/home/by-date?userId=${encodeURIComponent(uid)}&date=${encodeURIComponent(selectedDate)}&lang=${encodeURIComponent(lang)}`
+	    : `${API_BASE}/api/home/today?userId=${encodeURIComponent(uid)}&lang=${encodeURIComponent(lang)}`;
 
-        if(selectedDate) localStorage.removeItem("selectedDate");
+	  try{
+	    const res = await fetch(url);
+	    if(!res.ok){ renderEmpty(null); return; }
 
-        if(!data || data.active === false || !Array.isArray(data.meals) || data.meals.length === 0){
-          renderEmpty(data && data.message ? data.message : null);
-          return;
-        }
+	    const data = await res.json();
 
-        renderToday(data);
-      }catch(e){
-        console.error(e);
-        renderEmpty(null);
-      }
-    }
+	    if(selectedDate) localStorage.removeItem("selectedDate");
 
+	    if(!data || data.active === false || !Array.isArray(data.meals) || data.meals.length === 0){
+	      renderEmpty(data && data.message ? data.message : null);
+	      return;
+	    }
+
+	    // ✅ 2) Сохраняем в кэш и рисуем
+	    if(!selectedDate) saveHomeCache(uid, lang, data);
+	    renderToday(data);
+	  }catch(e){
+	    console.error(e);
+	    // ✅ если есть кэш — не затираем экран пустотой
+	    if(!selectedDate){
+	      const cached = readHomeCache(uid, lang);
+	      if(cached && cached.active !== false && Array.isArray(cached.meals) && cached.meals.length){
+	        return;
+	      }
+	    }
+	    renderEmpty(null);
+	  }
+	}
     function renderEmpty(msgText){
       document.getElementById("kpiProtein").textContent = "—";
       document.getElementById("kpiFiber").textContent = "—";

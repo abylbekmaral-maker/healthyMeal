@@ -152,6 +152,7 @@ const HM = (() => {
       summary_sleep_label: "수면",
       summary_water_label: "물",
       record: "아직 이 날은 기록이 없어요.",
+	  clock: "시간",
 
       // nav
       nav_home: "홈",
@@ -312,7 +313,8 @@ const HM = (() => {
       tag_balanced: "Сбалансировано",
       tag_balance: "Сбалансировано",
       tag_low_cal: "Низкокалорийно",
-      tag_low_fat: "Мало жира"
+      tag_low_fat: "Мало жира",
+	  clock: "часов",
     },
 
     en: {
@@ -458,7 +460,8 @@ const HM = (() => {
       tag_balanced: "Balanced",
       tag_balance: "Balanced",
       tag_low_cal: "Low calorie",
-      tag_low_fat: "Low fat"
+      tag_low_fat: "Low fat", 
+	  clock: "hour",
     }
   };
 
