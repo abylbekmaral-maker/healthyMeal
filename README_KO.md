@@ -2,7 +2,7 @@
 
 🌐 언어
 
-- 🇺🇸 [English](README.md)
+- 🇺🇸 [English](README_EN.md)
 - 🇷🇺 [Русский](README_RU.md)
 - 🇰🇷 한국어
 
@@ -64,7 +64,7 @@ Healthy Meal은 사용자의 건강 정보를 바탕으로 맞춤형 식단을 �
 4. 식단을 생성하고 추천 내용을 확인합니다.
 
 📄 **스크린샷이 포함된 사용자 안내서:**  
-[사용자 설명서(PDF)](docs/healthyMeal_사용자_설명서.pdf)
+[사용자 설명서 (PDF)](demo2/docs/healthyMeal_사용자_설명서.pdf)
 
 ## 🌍 프로젝트 링크
 

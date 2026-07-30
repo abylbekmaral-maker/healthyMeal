@@ -63,7 +63,7 @@ Healthy Meal is a web application that helps users manage healthy eating habits 
 4. Create a meal plan and explore the recommendations.
 
 📄 **Detailed User Guide with Screenshots:**  
-[User Guide (PDF)](docs/healthyMeal_사용자_설명서.pdf)
+[User Guide (PDF)](demo2/docs/healthyMeal_사용자_설명서.pdf)
 
 ## 🌍 Project Links
 
