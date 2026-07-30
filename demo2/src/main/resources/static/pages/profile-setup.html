@@ -6,7 +6,6 @@
   <title>Healthy Meal | Profile Setup</title>
   <link rel="stylesheet" href="../assets/styles.css"/>
 
-  <!-- 🔹 목표 카드 선택 효과 -->
   <style>
     .goal-card {
       cursor: pointer;
@@ -87,7 +86,6 @@
                 </select>
               </div>
 
-              <!-- 🔹 목표 설정 -->
               <div class="section">
                 <h2 data-i18n="goal">목표 설정</h2>
 
@@ -137,7 +135,6 @@
                 </div>
               </div>
 
-              <!-- 🔹 식이 제한 & 알레르기 -->
               <div class="section">
                 <h2 data-i18n="diet">식이 제한 및 알레르기</h2>
                 <div class="row cols-2">
@@ -179,7 +176,6 @@
     </main>
   </div>
 
-  <!-- 🔹 공통 스크립트 -->
   <script src="../assets/app.js"></script>
   <script>
     HM.setActiveNav("profile");
@@ -187,7 +183,6 @@
     HM.applyI18n();       // 언어 적용
   </script>
 
-  <!-- 🔹 프로필 저장/이동 로직 -->
   <script>
     const API_BASE = "";
 
@@ -209,7 +204,7 @@
     let selectedGoal = "loss";
     let saving = false;
 
-    // 🔹 목표 카드 선택
+
     goalCards.forEach(card => {
       card.addEventListener("click", () => {
         goalCards.forEach(c => c.classList.remove("selected"));
@@ -228,7 +223,7 @@
       selectedGoal = checkedGoal.value;
     }
 
-    // 🔹 기존 프로필 불러오기
+    // 기존 프로필 불러오기
     async function loadProfile() {
       try {
         const res  = await fetch(`${API_BASE}/api/profile/${userId}`);
@@ -265,7 +260,7 @@
       }
     }
 
-    // 🔹 시작하기 버튼
+    //  시작하기 버튼
     startBtn.addEventListener("click", async () => {
       if (saving) return;     // 여러 번 클릭 방지
       saving = true;
@@ -292,7 +287,7 @@
 
       console.log("save profile from setup:", body);
 
-      // 🔹 프론트에서도 프로필 존재 표시 (HM.ensureSession, 홈 카드에서 사용 가능)
+      // 프론트에서도 프로필 존재 표시
       try {
         const frontProfile = {
           age: ageInput.value.trim(),
@@ -310,7 +305,7 @@
       }
 
       try {
-        // 백엔드 저장 (실패해도 홈은 열 수 있게 try/catch 분리)
+        // 백엔드 저장
         const res  = await fetch(`${API_BASE}/api/profile`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -330,7 +325,7 @@
         console.error(err);
         alert("서버와 연결할 수 없습니다.\n그래도 홈 화면으로 이동합니다.");
       } finally {
-        // 🔥 한 번만 눌러도 확실히 home으로 이동
+        // home으로 이동
         setTimeout(() => {
           window.location.replace("./home.html");
         }, 150);

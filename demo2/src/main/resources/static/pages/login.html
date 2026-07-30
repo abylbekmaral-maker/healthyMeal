@@ -91,7 +91,7 @@
   <script>
     const API_BASE = "";
 
-    // 로그인 페이지 들어올 때마다 이전 로그인 정보 깔끔하게 지우기
+    // 로그인 정보 깔끔하게 지우기
     localStorage.removeItem("userId");
     localStorage.removeItem("userName");
     localStorage.removeItem("userEmail");
@@ -128,12 +128,12 @@
           return;
         }
 
-        // ✅ 로그인 성공 → 사용자 정보 저장
+        //  로그인 성공하면 사용자 정보 저장하게 돼요
         localStorage.setItem("userId",   String(data.userId));
         localStorage.setItem("userName", data.name || "");
         localStorage.setItem("userEmail", email);
 
-        // ✅ 프로필 여부 저장
+        // 프로필 여부 저장
         if (data.hasProfile === true) {
           localStorage.setItem("hasProfile", "true");
           window.location.href = "./home.html";

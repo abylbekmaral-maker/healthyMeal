@@ -194,7 +194,6 @@
         const u = uid();
         const l = langParam();
 
-        // 1) render cached instantly
         const cached = readPlannerCache(u, l);
         if(cached && Array.isArray(cached.days) && cached.days.length){
           showPlannerHeaderDate(cached.startDate);
@@ -204,7 +203,6 @@
           HM.applyI18n();
         }
 
-        // 2) refresh from server (but don't break UI if slow)
         try{
           const res = await safeFetchWithTimeout(
             `${API_BASE}/api/planner/current?userId=${encodeURIComponent(u)}&lang=${encodeURIComponent(l)}`,

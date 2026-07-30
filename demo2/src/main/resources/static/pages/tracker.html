@@ -43,22 +43,20 @@
 	  padding:0;
 	}
 
-	/* 🔹 한 줄(row) 정렬 + 간격 */
 	.day-summary-item{
 	  display:flex;
-	  align-items:center;      /* 세로 가운데 정렬 */
+	  align-items:center;
 	  margin-top:4px;
-	  column-gap:14px;         /* 라벨과 값 사이 간격 */
+	  column-gap:14px;
 	}
 
-	/* 🔹 라벨 폭을 조금 넓게 (러시아어 길이 고려) */
 	.day-summary-term{
 	  min-width:80px;          /* Сон / Настроение / Вода 다 들어가도록 */
 	  font-weight:600;
 	  color:rgba(100,116,139,.95);
 	}
 
-	/* 🔹 값 부분은 자연스럽게, 붙지 않게 */
+
 	.day-summary-desc{
 	  flex:0 0 auto;           /* 필요 이상으로 늘어나지 않게 */
 	  white-space:nowrap;      /* "4 ч" 같이 한 줄 유지 */
@@ -116,7 +114,7 @@
       margin-top:6px;
     }
 
-    /* 수면 – 세 가지 색 */
+
     #sleepNote{
       transition:background .2s, border-color .2s, color .2s;
     }
@@ -136,7 +134,7 @@
       color:#1d4ed8;
     }
 
-    /* 기분 카드 – 선택 시 앱 전체 느낌의 밝은 배경 */
+
     .mood-card{
       transition: background .15s ease, box-shadow .15s ease, transform .12s ease, border-color .15s ease;
       border-radius:16px;
@@ -151,8 +149,6 @@
 	  transform: translateY(-1px);
 	}
 
-
-    /* 그래프 + hover */
     .chart-box{
       position:relative;
       border:1px solid rgba(31,34,48,.08);
@@ -207,7 +203,6 @@
       font-weight:600;
     }
 
-    /* 통계 카드 */
     .stat-card{
       border-radius:18px;
       border:1px solid rgba(148,163,184,.18);
@@ -345,7 +340,6 @@
           <h2 class="title" data-i18n="tracker_title">건강 트래커</h2>
           <p class="subtitle" data-i18n="tracker_sub">영양이 건강에 미치는 영향을 추적하세요</p>
 
-          <!-- 수면 -->
           <div class="section">
             <div class="card pad">
               <div style="display:flex;align-items:center;gap:10px;font-weight:900;">
@@ -365,7 +359,7 @@
             </div>
           </div>
 
-          <!-- 기분 -->
+
           <div class="section">
             <div class="card pad" style="background: rgba(255,235,244,.78); border-color: rgba(226,67,88,.12);">
               <div style="display:flex;align-items:center;gap:10px;font-weight:900;">
@@ -399,7 +393,7 @@
             </div>
           </div>
 
-          <!-- 물 -->
+
           <div class="section">
             <div class="card pad" style="background: rgba(236,253,245,.9); border-color: rgba(22,163,74,.15);">
               <div style="display:flex;align-items:center;gap:10px;font-weight:900;">
@@ -445,12 +439,12 @@
             </div>
           </div>
 
-          <!-- 저장 버튼 -->
+          <!-- 저장 кнопка -->
           <div class="section">
             <button class="btn" id="saveTrackerBtn" data-i18n="save_today">오늘의 데이터 저장하기</button>
           </div>
 
-          <!-- 에너지 vs 영양 -->
+          <!-- 에너지 -->
           <div class="section">
             <div class="card pad">
               <div style="display:flex;align-items:flex-start;gap:10px;">
@@ -468,7 +462,7 @@
                     <path d="M20 40H310"/><path d="M20 70H310"/><path d="M20 100H310"/><path d="M20 130H310"/>
                   </g>
 
-                  <!-- energy line -->
+
                   <path d="M20 70 L65 60 L110 95 L155 65 L200 100 L245 70 L290 60"
                         stroke="rgba(91,91,214,.85)" stroke-width="3" fill="none"/>
                   <g fill="rgba(91,91,214,.85)">
@@ -476,7 +470,7 @@
                     <circle cx="155" cy="65" r="4"/><circle cx="200" cy="100" r="4"/><circle cx="245" cy="70" r="4"/><circle cx="290" cy="60" r="4"/>
                   </g>
 
-                  <!-- nutrition line -->
+
                   <path d="M20 55 L65 45 L110 70 L155 35 L200 65 L245 55 L290 50"
                         stroke="rgba(226,67,88,.85)" stroke-width="3" fill="none"/>
                   <g fill="rgba(226,67,88,.85)">
@@ -490,7 +484,7 @@
                   </g>
                 </svg>
 
-                <!-- hover hit 영역 -->
+
                 <div class="chart-hit" data-day="0" style="left:0%;"></div>
                 <div class="chart-hit" data-day="1" style="left:14.285%;"></div>
                 <div class="chart-hit" data-day="2" style="left:28.57%;"></div>
@@ -567,8 +561,6 @@
 		    </div>
 		  </div>
 
-
-          <!-- 로그인 안 되어 있으면 보호 -->
           <script>
             (function () {
               var uid = localStorage.getItem("userId");
@@ -583,7 +575,6 @@
       </div>
     </main>
 
-    <!-- bottom nav -->
     <nav class="bottom-nav" aria-label="Bottom Navigation">
       <a class="nav-item" data-nav="home" href="./home.html">
         <div class="dot">
@@ -612,14 +603,12 @@
     </nav>
   </div>
 
-  <!-- 공통 앱 스크립트 -->
   <script src="../assets/app.js"></script>
   <script>
     HM.setActiveNav("tracker");
     HM.ensureSession();
   </script>
 
-  <!-- 트래커 전용 로직 -->
   <script>
     const API_BASE = "";
     const userId   = Number(localStorage.getItem("userId"));
@@ -676,7 +665,7 @@
 
     function pad2(n){ return n < 10 ? "0"+n : ""+n; }
 
-    // 언어 코드 가져오기 (HM.getLang 우선)
+    // 언어 코드 가져오기
     function getCurrentLang() {
       if (window.HM && typeof HM.getLang === "function") {
         return HM.getLang();
@@ -703,7 +692,7 @@
       }
     };
 
-    // 수면 메시지 사전 (좋음/보통/부족)
+    // 수면 메시지 사전
     const SLEEP_MSG_DICT = {
       good: {
         ko: "푹 잘 잤어요! 오늘도 좋은 컨디션을 기대해볼 수 있어요.",
@@ -737,7 +726,7 @@
       if (waterCupsCountEl)     waterCupsCountEl.textContent     = cups;
       if (waterGoalLitersEl)    waterGoalLitersEl.textContent    = goalL;
 
-      // 단위는 app.js의 water_cups_unit 활용
+
       let unitText = "잔";
       if (window.HM && typeof HM.t === "function") {
         unitText = HM.t("water_cups_unit");
@@ -771,7 +760,7 @@
       });
     }
 
-    // 수면 UI 업데이트 (라벨 + 색 + 메시지)
+    // 수면 UI (라벨 + 색 + 메시지)
     function updateSleepUI(hours) {
       if (sleepLabel) {
         sleepLabel.textContent = `${hours}시간`;
@@ -805,7 +794,7 @@
       });
     }
 
-    // 기분 UI
+    // UI
     function updateMoodUI(mood) {
       moodCards.forEach(card => {
         const input = card.querySelector('input[name="mood"]');
@@ -831,7 +820,7 @@
       });
     });
 
-    // 그래프 툴팁 요일
+    // 그래프 요일
     const TOOLTIP_DOWS = {
       ko: ["월","화","수","목","금","토","일"],
       en: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
@@ -869,7 +858,7 @@
       });
     });
 
-    // 달력 i18n
+    // 달력 с переводом
     const CAL_I18N = {
       ko: {
         dows:["일","월","화","수","목","금","토"],
@@ -954,18 +943,16 @@
 
 	async function loadDay(dateStr){
 	  try{
-	    // 🔹 마지막으로 선택한 날짜 기억
+
 	    lastSelectedDateStr = dateStr;
 
 	    const res = await fetch(`${API_BASE}/api/tracker/day?userId=${userId}&date=${dateStr}`);
 	    const data = await res.json();
 
-	    // 기록이 없는 날짜인 경우
-	    if (!data.hasEntry || !data.entry){
-	      // 요약 카드: "기록 없음" 표시
-	      renderSummary(dateStr, null);
 
-	      // 메인 트래커 UI 기본값 (지금 로직 유지)
+	    if (!data.hasEntry || !data.entry){
+
+	      renderSummary(dateStr, null);
 	      const defaultSleep = 7;
 	      if (sleepInput) {
 	        sleepInput.value = defaultSleep;
@@ -977,10 +964,10 @@
 	      return;
 	    }
 
-	    // 기록이 있는 날짜
+	    // то что уже отмечали
 	    const entry = data.entry;
 
-	    // 메인 트래커 UI (기존 로직 그대로)
+	    // 메인 트래커 UI
 	    if (entry.sleepHours != null && sleepInput){
 	      sleepInput.value = entry.sleepHours;
 	      updateSleepUI(entry.sleepHours);
@@ -994,8 +981,6 @@
 	      waterCount = Math.max(0, Math.min(WATER_GOAL, entry.waterGlasses));
 	      renderWater();
 	    }
-
-	    // 🔹 요약 카드도 함께 갱신
 	    renderSummary(dateStr, entry);
 
 	  }catch(err){
@@ -1021,7 +1006,6 @@
           if (data.correlation==="MID") textKey = "corr_mid";
           else if (data.correlation==="LOW") textKey = "corr_low";
 
-          // 기본 한국어 텍스트
           let text = "높음";
           if (data.correlation==="MID") text = "보통";
           else if (data.correlation==="LOW") text = "낮음";
@@ -1033,7 +1017,6 @@
       }
     }
 
-    // 저장 버튼 → 백엔드 저장
     if (saveBtn) {
       saveBtn.addEventListener("click", async (e)=>{
         e.preventDefault();
@@ -1068,7 +1051,7 @@
       });
     }
 
-    // 달력 월 이동
+
     if (prevMonthBtn) {
       prevMonthBtn.addEventListener("click", ()=>{
         currentMonth--;
@@ -1090,7 +1073,6 @@
       });
     }
 
-    // 언어 버튼 누를 때: app.js가 언어 바꾼 뒤 물/기분/달력/수면 다시 렌더
 	document.querySelectorAll("[data-set-lang]").forEach(btn=>{
 	  btn.addEventListener("click", ()=>{
 	    setTimeout(()=>{
@@ -1101,7 +1083,6 @@
 	      updateSleepUI(currentSleep);
 	      loadCalendarMonth();
 
-	      // 🔹 요약 카드도 현재 언어에 맞게 다시 불러오기
 	      const dateStr = lastSelectedDateStr
 	        ? lastSelectedDateStr
 	        : `${today.getFullYear()}-${pad2(today.getMonth()+1)}-${pad2(today.getDate())}`;
@@ -1110,8 +1091,6 @@
 	  });
 	});
 
-	// 하루 요약 카드 렌더 (이모지 없이, 텍스트만)
-	// 하루 요약 카드 렌더 (메시지 없이, 다국어 지원)
 	function renderSummary(dateStr, entry){
 	  const section   = document.getElementById("daySummarySection");
 	  const dateEl    = document.getElementById("summaryDate");
@@ -1120,13 +1099,11 @@
 
 	  if (!section || !dateEl || !contentEl || !commentEl) return;
 
-	  // 카드 보이게
 	  section.style.display = "block";
 	  dateEl.textContent = dateStr;
 
 	  const lang = getCurrentLang();
 
-	  // 공통 텍스트 도우미
 	  function textNoRecord(){
 	    if (lang === "en") return "No record";
 	    if (lang === "ru") return "Нет данных";
@@ -1173,7 +1150,6 @@
 	    return code;
 	  }
 
-	  // 🔹 기록이 없을 때
 	  if (!entry){
 	    contentEl.innerHTML = `
 	      <div style="font-size:12px; text-align:center;">
@@ -1184,7 +1160,6 @@
 	    return;
 	  }
 
-	  // 🔹 수면 텍스트
 	  let sleepText;
 	  if (entry.sleepHours != null){
 	    if (lang === "en")      sleepText = `${entry.sleepHours} h`;
@@ -1194,10 +1169,8 @@
 	    sleepText = textNoRecord();
 	  }
 
-	  // 🔹 기분 텍스트
 	  const moodText = moodTextByCode(entry.mood);
 
-	  // 🔹 물 텍스트
 	  let waterText;
 	  if (entry.waterGlasses != null){
 	    const liters = (entry.waterGlasses * 0.1).toFixed(1);
@@ -1212,7 +1185,6 @@
 	    waterText = textNoRecord();
 	  }
 
-	  // 🔹 이모지 없이, 라벨/값만 정리 (언어별 라벨 사용)
 	  contentEl.innerHTML = `
 	    <div class="day-summary-item">
 	      <div class="day-summary-term">${labelSleep()}</div>
@@ -1228,20 +1200,18 @@
 	    </div>
 	  `;
 
-	  // 🔹 하루 코멘트 메시지는 완전히 제거 (깔끔하게)
 	  commentEl.textContent = "";
 	}
 
-    // 초기 상태: 오늘 날짜 기준으로 DB에서 불러오기
     (function init(){
       const initialSleep = sleepInput ? Number(sleepInput.value || "7") : 7;
       updateSleepUI(initialSleep);
       updateMoodUI("ok");
       renderWater();
       const todayStr = `${today.getFullYear()}-${pad2(today.getMonth()+1)}-${pad2(today.getDate())}`;
-      loadDay(todayStr);      // 오늘 DB에 있으면 그대로, 없으면 기본값
-      loadSummary();          // 지난 7일 통계
-      loadCalendarMonth();    // 이번 달 기록 표시
+      loadDay(todayStr);
+      loadSummary();
+      loadCalendarMonth();
     })();
   </script>
 </body>

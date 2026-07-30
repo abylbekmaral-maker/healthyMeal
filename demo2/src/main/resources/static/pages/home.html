@@ -109,7 +109,6 @@
 
     const API_BASE = "";
 
-    // ✅ lang / hm_lang 둘 다 지원 (RU인데 한국어 뜨는 문제 원인 중 하나)
     function langParam(){
       const raw = (localStorage.getItem("lang") || localStorage.getItem("hm_lang") || "ko").toString().trim().toLowerCase();
       if (raw === "ru") return "RU";
@@ -139,8 +138,7 @@
       return map[key] ? map[key][L] : "";
     }
 
-    // ✅ 태그 번역: HM.t("tag_high_protein") 이런 식으로 app.js에 키가 있으면 그걸 쓰고,
-    // 없으면 보기 좋게 "HIGH_PROTEIN" -> "High protein" fallback
+
     function normalizeTagKey(tag){
       const up = String(tag || "").trim().toUpperCase();
       const map = {
@@ -205,7 +203,7 @@
 
 	  const selectedDate = localStorage.getItem("selectedDate");
 
-	  // ✅ 1) Сразу покажем кэш (только если НЕ выбран конкретный день)
+
 	  if(!selectedDate){
 	    const cached = readHomeCache(uid, lang);
 	    if(cached && cached.active !== false && Array.isArray(cached.meals) && cached.meals.length){
@@ -230,12 +228,13 @@
 	      return;
 	    }
 
-	    // ✅ 2) Сохраняем в кэш и рисуем
+	    // Сохраняем
 	    if(!selectedDate) saveHomeCache(uid, lang, data);
 	    renderToday(data);
 	  }catch(e){
 	    console.error(e);
-	    // ✅ если есть кэш — не затираем экран пустотой
+
+	    // если есть кэш — не затираем экран пустотой
 	    if(!selectedDate){
 	      const cached = readHomeCache(uid, lang);
 	      if(cached && cached.active !== false && Array.isArray(cached.meals) && cached.meals.length){

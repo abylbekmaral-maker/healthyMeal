@@ -61,8 +61,8 @@ hr{border:none;border-top:1px solid var(--line);margin:14px 0}
 }
 
 .header{
-  position: fixed;      /* ⭐ 핵심 */
-  z-index: 1000;        /* ⭐ 클릭/고정 문제 해결 */
+  position: fixed;
+  z-index: 1000;
   padding:16px 16px 10px;
   background: linear-gradient(180deg, rgba(255,255,255,.90), rgba(255,255,255,.65));
   border-bottom: 1px solid rgba(31,34,48,.06);
@@ -368,12 +368,12 @@ hr{border:none;border-top:1px solid var(--line);margin:14px 0}
 
 
 
-/* --- Page variants --- */
+
 .no-bottom-nav .content{
   padding-bottom: 22px;
 }
 
-/* --- 3 meals recommendation cards (Home) --- */
+/* Home */
 .meals3{
   display:grid;
   gap:12px;
@@ -439,20 +439,20 @@ hr{border:none;border-top:1px solid var(--line);margin:14px 0}
 }
 
 
-/* --- Web shell layout: fixed header/footer, centered mobile-like panel --- */
+/* layout: fixed header */
 :root{ --header-h: 96px; --footer-h: 72px; }
 
 body{
   min-height:100vh;
 }
 
-/* Make overall app area full width like a website */
+/* app area */
 .app{
   padding:0;
   justify-content:center;
 }
 
-/* Full-width fixed header/footer (website) */
+
 .header{
   position:fixed;
   top:0; left:0; right:0;
@@ -461,7 +461,7 @@ body{
   border-bottom: 1px solid rgba(31,34,48,.08);
 }
 
-/* main content scroll area */
+/* main content */
 .main{
   padding-top: calc(var(--header-h) + 14px);
   padding-bottom: calc(var(--footer-h) + 14px);
@@ -470,13 +470,13 @@ body{
   justify-content:center;
 }
 
-/* The centered panel that feels like mobile */
+/* The centered panel как в телефоне */
 .panel {
   width: min(420px, 100%);
   margin: 0 auto;
 }
 
-/* Bottom nav fixed full width, only on pages that include it */
+/* Кнопки */
 .bottom-nav{
   position:fixed;
   left:0; right:0; bottom:0;
@@ -485,13 +485,13 @@ body{
   background: linear-gradient(180deg, rgba(255,255,255,.70), rgba(255,255,255,.92));
   border-top: 1px solid rgba(31,34,48,.08);
 }
-/* Keep bottom-nav inner row centered to panel width */
+
 .bottom-nav .nav{
   width:min(420px, 100%);
   margin: 0 auto;
 }
 
-/* Logo image */
+/* Logo фото */
 .logo img.logo-img{
 
   width:40px; height:40px;
@@ -514,7 +514,7 @@ body{
   border-color: rgba(234,179,8,.9);
   box-shadow: 0 6px 16px rgba(234,179,8,.35);
 }
-/* ===== Planner / Shopping luxe add-on (append only) ===== */
+/*  Planner / Shopping страницы */
 
 .planner-actions{
   display:flex;
@@ -610,7 +610,6 @@ body{
 @media (max-width: 380px){
   .shop-ul{ grid-template-columns: 1fr; }
 }
-/* ===== Planner premium additions ===== */
 
 .planner-hero{
   margin-top: 8px;
@@ -686,7 +685,6 @@ body{
   background: rgba(31,34,48,.04) !important;
 }
 
-/* empty states */
 .empty-card{
   background: rgba(255,255,255,.82);
   border: 1px dashed rgba(31,34,48,.16);
@@ -698,7 +696,6 @@ body{
 .empty-title{ font-weight: 900; }
 .empty-sub{ color: rgba(31,34,48,.60); margin-top: 6px; }
 
-/* shopping basket */
 .shopping-head{
   display:flex;
   justify-content:space-between;
@@ -776,7 +773,7 @@ body{
 }
 .empty-card-wide { width: 100%; }
 
-/* HOME KPI */
+
 .kpi{
   display:grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -794,7 +791,7 @@ body{
 .kpi-val{ font-size:18px; font-weight:800; margin-top:6px; }
 .kpi-unit{ font-size:12px; font-weight:700; margin-left:4px; opacity:0.7; }
 
-/* PLANNER EMPTY HERO */
+
 .empty-hero{
   border-radius:22px;
   padding:18px;
@@ -811,7 +808,6 @@ body{
 .empty-hero-ic{ font-size:28px; }
 .empty-hero .btn{ margin-top:6px; }
 
-/* responsive */
 @media (max-width: 720px){
   .kpi{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
@@ -835,10 +831,10 @@ body{
 @media (max-width: 720px){
   .kpi{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-/* ✅ Planner day badge (square) force remove */
+
 .day-badge{ display:none !important; }
 
-/* ✅ Planner status message: project tone (no green check look) */
+
 .planner-status{
   display:none;
   background: linear-gradient(135deg, rgba(91,91,214,.10), rgba(212,74,166,.10), rgba(226,67,88,.08));
@@ -846,7 +842,6 @@ body{
   color: rgba(31,34,48,.72);
 }
 
-/* cleaner day header (2 columns) */
 .day-head.day-head-clean{
   grid-template-columns: 1fr auto !important;
 }
@@ -855,7 +850,7 @@ body{
   opacity: .55;
   background: rgba(31,34,48,.02);
 }
-/* shopping 체크 표시 */
+/* shopping отметка */
 .basket-chip.checked{
   text-decoration: line-through;
   opacity: .55;

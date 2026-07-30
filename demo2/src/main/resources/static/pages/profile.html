@@ -52,7 +52,7 @@
                   </svg>
                 </div>
                 <div>
-                  <!-- 🔹 JS에서 유저 이름/이메일로 채움 -->
+
                   <div id="profileDisplayName" style="font-weight:900; font-size:18px">사용자 이름</div>
                   <div id="profileDisplayEmail" style="color:var(--muted); font-size:13px">email@example.com</div>
                 </div>
@@ -61,7 +61,6 @@
             </div>
           </div>
 
-          <!-- 개인 정보 -->
           <div class="section">
             <div class="card pad">
               <div style="display:flex;align-items:center;gap:10px;font-weight:900;">
@@ -112,7 +111,6 @@
               <div class="section">
                 <h2 style="margin:0 0 8px" data-i18n="diet">식이 제한 및 알레르기</h2>
                 <div class="row cols-2">
-                  <!-- 🔹 value / name="diet" (DB notes랑 연결) -->
                   <label class="chip">
                     <input type="checkbox" name="diet" value="gluten"/>
                     <span data-i18n="gluten">글루텐 프리</span>
@@ -147,7 +145,6 @@
                   <span data-i18n="health_state_sub">영양 섭취에 영향을 줄 수 있는 건강 상태를 선택하세요</span>
                 </div>
 
-                <!-- 건강 상태는 지금은 DB와 연결 X (디자인만 유지) -->
 				<div class="list" style="margin-top:10px">
 				  <label class="chip">
 				    <input type="checkbox" name="condition" value="diabetes"/>
@@ -227,7 +224,6 @@
   <script>HM.applyI18n();</script>
 
 
-  <!-- 🔹 실제 DB와 연결되는 프로필 로직 -->
   <script>
     const API_BASE = "";
 
@@ -235,13 +231,13 @@
     const userName = localStorage.getItem("userName");
     const userEmail = localStorage.getItem("userEmail");
 
-    // 로그인 안 되어 있으면 바로 내보내기
+
     if (!userId) {
       alert("로그인이 필요합니다.");
       window.location.href = "./login.html";
     }
 
-    // 상단/개인정보 DOM
+
     const displayNameEl = document.getElementById("profileDisplayName");
     const displayEmailEl = document.getElementById("profileDisplayEmail");
     const nameInput = document.getElementById("profileNameInput");
@@ -256,7 +252,6 @@
       emailInput.value = userEmail;
     }
 
-    // 식이 제한 / 건강 상태 체크박스
     const dietCheckboxes       = document.querySelectorAll('input[name="diet"]');
     const conditionCheckboxes  = document.querySelectorAll('input[name="condition"]');
     const updateMedBtn         = document.getElementById("updateMedBtn");
@@ -269,7 +264,7 @@
 
     let lastProfileData = null;
 
-    // ✅ 프로필 불러오기: /api/profile/{userId}
+
     async function loadProfile() {
       try {
         const res  = await fetch(`${API_BASE}/api/profile/${userId}`);
@@ -314,7 +309,7 @@
       }
     }
 
-    // ✅ 의료 정보(식이 제한 + 건강 상태) 업데이트: /api/profile
+
     updateMedBtn.addEventListener("click", async () => {
       const selectedDiet = Array.from(dietCheckboxes)
         .filter(cb => cb.checked)
@@ -353,7 +348,7 @@
       }
     });
 
-    // ✅ 비밀번호 변경: /api/change-password
+    // api/change-password
     changePwBtn.addEventListener("click", async () => {
       const currentPw = currentPwInput.value.trim();
       const newPw     = newPwInput.value.trim();
@@ -395,13 +390,13 @@
       }
     });
 
-    // ✅ 로그아웃
+    //  로그아웃
     logoutBtn.addEventListener("click", () => {
       localStorage.removeItem("userId");
       localStorage.removeItem("userName");
       localStorage.removeItem("userEmail");
 
-      // 혹시 세션 표시용 값 있으면 같이 제거
+
       if (window.LS && LS.session) {
         localStorage.removeItem(LS.session);
       }
@@ -413,7 +408,7 @@
 	conditionCheckboxes.forEach(cb => {
 	  cb.addEventListener("change", () => {
 
-	    // 🔹 '해당 없음' 선택한 경우 → 나머지 전부 비활성화
+
 	    if (cb === noneOption && cb.checked) {
 	      conditionCheckboxes.forEach(other => {
 	        if (other !== noneOption) {
@@ -423,7 +418,6 @@
 	      });
 	    }
 
-	    // 🔹 다른 조건 선택한 경우 → '해당 없음' 해제 + 다시 활성화
 	    if (cb !== noneOption && cb.checked) {
 	      noneOption.checked = false;
 	      conditionCheckboxes.forEach(other => {
@@ -431,7 +425,6 @@
 	      });
 	    }
 
-	    // 🔹 아무것도 선택 안 남으면 → 다시 전체 활성화
 	    const anyChecked = Array.from(conditionCheckboxes)
 	      .some(c => c.checked);
 

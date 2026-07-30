@@ -1,4 +1,4 @@
-/* Healthy Meal - merged app.js (DB + i18n + stable session) */
+
 window.__APP_LOADED__ = true;
 console.log("✅ app.js loaded (merged)");
 
@@ -10,9 +10,8 @@ const HM = (() => {
     tracker: "hm_tracker"
   };
 
-  // =========================
-  // i18n dictionary (KO/RU/EN)
-  // =========================
+  // 언어
+
   const dict = {
     ko: {
       brand_tagline: "영양을 중심으로, 꾸준히",
@@ -145,7 +144,7 @@ const HM = (() => {
       update_med: "의료 정보 업데이트",
       logout: "로그아웃",
 
-      // calendar / summary
+      // calendar
       calendar_legend: "색이 있는 날짜는 기록이 있는 날이에요.",
       summary_title: "하루 기록 요약",
       summary_mood_label: "기분",
@@ -160,7 +159,7 @@ const HM = (() => {
       nav_tracker: "트래커",
       nav_profile: "프로필",
 
-      // nutrition tags -> label
+      // nutrition tags - label
       tag_high_protein: "고단백",
       tag_low_carb: "저탄수",
       tag_high_fiber: "고식이섬유",
@@ -517,9 +516,7 @@ const HM = (() => {
     return out || raw;
   }
 
-  // -------------------------
-  // i18n apply
-  // -------------------------
+
   function applyI18n() {
     const lang = getLang();
     document.documentElement.setAttribute("lang", lang);
@@ -550,16 +547,12 @@ const HM = (() => {
     });
   }
 
-  /**
-   * ✅ Session rule (single source of truth):
-   * - login/signup page: skip
-   * - needs userId, and profile setup needs hasProfile === "true"
-   */
+
   function ensureSession() {
     try {
       const page = document.body?.dataset?.page;
 
-      // allow unauth pages
+
       if (page === "login" || page === "signup") return true;
 
       const userId = localStorage.getItem("userId");
