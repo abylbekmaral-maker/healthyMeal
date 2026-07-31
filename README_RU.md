@@ -43,7 +43,7 @@ Browser → Spring Boot (REST API) → Spring Data JPA → MySQL (Aiven Cloud)
 5. После создания плана откройте страницу **Home** и просмотрите рекомендации.
 
 🔗 **Подробная инструкция со скриншотами:**  
-[Руководство пользователя (PDF)](demo2/docs/healthyMeal_사용자_설명서.pdf)
+[Руководство пользователя (PDF)](demo2/docs/HealthyMeal_User_Guide.pdf)
 
 ##  Ссылки на проект
 

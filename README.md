@@ -44,7 +44,7 @@ Application deployed on Render.
 5. Open the **Home** page to view your personalized recommendations.
 
 🔗 **Detailed User Guide (PDF):**  
-[User Guide (PDF)](demo2/docs/healthyMeal_사용자_설명서.pdf)
+[User Guide (PDF)](demo2/docs/HealthyMeal_User_Guide.pdf)
 
 ## Project Links
 

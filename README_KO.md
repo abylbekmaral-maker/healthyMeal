@@ -44,7 +44,7 @@ Browser → Spring Boot (REST API) → Spring Data JPA → MySQL (Aiven Cloud)
 5. **Home**에서 맞춤형 식단 추천을 확인합니다.
 
 🔗 **사용자 매뉴얼(PDF):**  
-[사용자 매뉴얼(PDF)](demo2/docs/healthyMeal_사용자_설명서.pdf)
+[사용자 매뉴얼(PDF)](demo2/docs/HealthyMeal_User_Guide.pdf)
 
 ## 프로젝트 링크
 
