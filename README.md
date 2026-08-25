@@ -8,6 +8,22 @@
 
 Healthy Meal is a web application that helps users maintain healthy eating habits by providing personalized meal recommendations based on their health information.
 
+## Try the Project
+You can open the live version and try the main features of Healthy Meal.
+
+> ⚠️ The server may take 2–3 minutes to start when opening the application for the first time. Please wait until it finishes loading.
+- **Live Demo:** https://healthymeal.onrender.com
+- 🔗 **Detailed User Guide (PDF):**  
+  [User Guide (PDF)](demo2/docs/HealthyMeal_User_Guide.pdf)
+
+## 💬 How to Test
+
+1. Open the **Live Demo** above.
+2. Log in or create a new account.
+3. Complete your profile.
+4. Create a weekly meal plan in the **Planner** page.
+5. Open the **Home** page to view your personalized recommendations.
+
 ## Key Features
 
 - Personalized weekly meal plan.
@@ -33,20 +49,7 @@ Healthy Meal is a web application that helps users maintain healthy eating habit
 Browser → Spring Boot (REST API) → Spring Data JPA → MySQL (Aiven Cloud)
 Application deployed on Render.
 
-## 💬 How to Test
+## 💻 Source Code
+The full source code of the project is available on GitHub.
 
-> ⚠️ The server may take 2–3 minutes to start when opening the application for the first time. Please wait until it finishes loading.
-
-1. Open the application using the link below.
-2. Log in or create a new account.
-3. Complete your profile.
-4. Create a weekly meal plan in the **Planner** page.
-5. Open the **Home** page to view your personalized recommendations.
-
-🔗 **Detailed User Guide (PDF):**  
-[User Guide (PDF)](demo2/docs/HealthyMeal_User_Guide.pdf)
-
-## Project Links
-
-- **Live Demo:** https://healthymeal.onrender.com
 - **GitHub Repository:** https://github.com/abylbekmaral-maker/healthyMeal
