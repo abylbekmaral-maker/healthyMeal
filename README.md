@@ -6,12 +6,10 @@
 - [Русский](README_RU.md)
 - [한국어](README_KO.md)
 
-Healthy Meal is a web application that helps users maintain healthy eating habits by providing personalized meal recommendations based on their health information.
-
 ## Try the Project
-You can open the live version and try the main features of Healthy Meal.
 
 > ⚠️ The server may take 2–3 minutes to start when opening the application for the first time. Please wait until it finishes loading.
+
 - **Live Demo:** https://healthymeal.onrender.com
 - 🔗 **Detailed User Guide (PDF):**  
   [User Guide (PDF)](demo2/docs/HealthyMeal_User_Guide.pdf)
@@ -23,6 +21,8 @@ You can open the live version and try the main features of Healthy Meal.
 3. Complete your profile.
 4. Create a weekly meal plan in the **Planner** page.
 5. Open the **Home** page to view your personalized recommendations.
+
+Healthy Meal is a web application that helps users maintain healthy eating habits by providing personalized meal recommendations based on their health information.
 
 ## Key Features
 
