@@ -11,7 +11,7 @@
 > ⚠️ 처음 접속 시 서버가 시작되는 데 2~3분 정도 걸릴 수 있습니다. 페이지가 모두 로드될 때까지 기다려 주세요.
 
 - **Live Demo:** https://healthymeal.onrender.com
--🔗 **사용자 매뉴얼(PDF):**  
+- 🔗 **사용자 매뉴얼(PDF):**  
 [사용자 매뉴얼(PDF)](demo2/docs/HealthyMeal_User_Guide.pdf)
 
 ## 💬 테스트 방법
